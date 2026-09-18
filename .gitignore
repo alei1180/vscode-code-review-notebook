@@ -1,0 +1,11 @@
+node_modules/
+out/
+coverage/
+.vscode-test/
+*.vsix
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+work/

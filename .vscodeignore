@@ -1,0 +1,13 @@
+src/**
+test/**
+work/**
+.vscode/**
+.github/**
+.gitignore
+.prettier*
+eslint.config.mjs
+tsconfig.json
+.nvmrc
+out/test/**
+**/*.map
+*.vsix

@@ -1,0 +1,57 @@
+{
+  "name": "vscode-code-review-notes",
+  "displayName": "Code Review Notes",
+  "description": "Manual code reviews with local notes and Markdown or PDF reports.",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "vscode": "^1.96.0",
+    "node": ">=24"
+  },
+  "main": "./out/src/extension.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alei1180/vscode-code-review-notes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alei1180/vscode-code-review-notes/issues"
+  },
+  "homepage": "https://github.com/alei1180/vscode-code-review-notes#readme",
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "code review",
+    "review notes",
+    "markdown",
+    "pdf"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node --test out/test/*.test.js",
+    "lint": "eslint src test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package",
+    "package:list": "vsce ls"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.3",
+    "@types/pdfkit": "0.17.6",
+    "@types/vscode": "1.96.0",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.0.0",
+    "eslint": "10.10.0",
+    "npm": "12.0.2",
+    "prettier": "3.9.7",
+    "typescript": "7.0.2",
+    "typescript-eslint": "8.70.0"
+  },
+  "dependencies": {
+    "pdfkit": "0.20.2",
+    "zod": "4.6.5"
+  }
+}
