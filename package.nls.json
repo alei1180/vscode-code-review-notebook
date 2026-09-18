@@ -1,0 +1,18 @@
+{
+  "command.start": "Start Code Review",
+  "command.add": "Add Review Note",
+  "command.complete": "Complete Review",
+  "command.select": "Select Review",
+  "command.editReview": "Edit Review",
+  "command.copy": "New Review for This Task",
+  "command.export": "Export Report",
+  "command.openNote": "Open Note Location",
+  "command.viewNote": "View Saved Note",
+  "command.editNote": "Edit Note",
+  "command.deleteNote": "Delete Note",
+  "view.reviews": "Reviews",
+  "view.welcome": "[Start Code Review](command:codeReviewNotes.start)",
+  "setting.language": "Language of extension forms and messages. Commands follow the VS Code language.",
+  "setting.format": "Default report format.",
+  "setting.directory": "Report directory: absolute path or path relative to the project."
+}

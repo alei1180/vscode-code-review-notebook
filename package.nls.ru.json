@@ -1,0 +1,18 @@
+{
+  "command.start": "Начать ревью",
+  "command.add": "Добавить замечание",
+  "command.complete": "Завершить ревью",
+  "command.select": "Выбрать ревью",
+  "command.editReview": "Редактировать ревью",
+  "command.copy": "Новое ревью этой задачи",
+  "command.export": "Экспортировать отчёт",
+  "command.openNote": "Открыть строку замечания",
+  "command.viewNote": "Просмотреть замечание",
+  "command.editNote": "Редактировать замечание",
+  "command.deleteNote": "Удалить замечание",
+  "view.reviews": "Ревью",
+  "view.welcome": "[Начать ревью](command:codeReviewNotes.start)",
+  "setting.language": "Язык форм и сообщений расширения. Команды используют язык VS Code.",
+  "setting.format": "Формат отчёта по умолчанию.",
+  "setting.directory": "Папка отчётов: абсолютный путь или путь относительно проекта."
+}

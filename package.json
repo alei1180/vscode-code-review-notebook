@@ -53,5 +53,224 @@
   "dependencies": {
     "pdfkit": "0.20.2",
     "zod": "4.6.5"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Review notes require a trusted local project."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "Only local files are supported."
+    }
+  },
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onView:codeReviewNotes.reviews"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeReviewNotes.start",
+        "title": "%command.start%",
+        "category": "Code Review Notes",
+        "icon": "$(add)"
+      },
+      {
+        "command": "codeReviewNotes.add",
+        "title": "%command.add%",
+        "category": "Code Review Notes",
+        "icon": "$(comment-add)"
+      },
+      {
+        "command": "codeReviewNotes.complete",
+        "title": "%command.complete%",
+        "category": "Code Review Notes",
+        "icon": "$(check)"
+      },
+      {
+        "command": "codeReviewNotes.select",
+        "title": "%command.select%",
+        "category": "Code Review Notes",
+        "icon": "$(check)"
+      },
+      {
+        "command": "codeReviewNotes.editReview",
+        "title": "%command.editReview%",
+        "category": "Code Review Notes",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "codeReviewNotes.copy",
+        "title": "%command.copy%",
+        "category": "Code Review Notes",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "codeReviewNotes.export",
+        "title": "%command.export%",
+        "category": "Code Review Notes",
+        "icon": "$(export)"
+      },
+      {
+        "command": "codeReviewNotes.openNote",
+        "title": "%command.openNote%",
+        "category": "Code Review Notes",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "codeReviewNotes.viewNote",
+        "title": "%command.viewNote%",
+        "category": "Code Review Notes",
+        "icon": "$(preview)"
+      },
+      {
+        "command": "codeReviewNotes.editNote",
+        "title": "%command.editNote%",
+        "category": "Code Review Notes",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "codeReviewNotes.deleteNote",
+        "title": "%command.deleteNote%",
+        "category": "Code Review Notes",
+        "icon": "$(trash)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeReviewNotes",
+          "title": "Code Review Notes",
+          "icon": "media/activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeReviewNotes": [
+        {
+          "id": "codeReviewNotes.reviews",
+          "name": "%view.reviews%"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "codeReviewNotes.reviews",
+        "contents": "%view.welcome%"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "codeReviewNotes.add",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r",
+        "when": "editorTextFocus && resourceScheme == file"
+      }
+    ],
+    "configuration": {
+      "title": "Code Review Notes",
+      "properties": {
+        "codeReviewNotes.language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "ru"
+          ],
+          "enumDescriptions": [
+            "English",
+            "\u0420\u0443\u0441\u0441\u043a\u0438\u0439"
+          ],
+          "default": "en",
+          "scope": "application",
+          "description": "%setting.language%"
+        },
+        "codeReviewNotes.reportFormat": {
+          "type": "string",
+          "enum": [
+            "markdown",
+            "pdf",
+            "both"
+          ],
+          "default": "markdown",
+          "description": "%setting.format%"
+        },
+        "codeReviewNotes.reportDirectory": {
+          "type": "string",
+          "default": "code-review-notes",
+          "description": "%setting.directory%"
+        }
+      }
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "codeReviewNotes.start",
+          "when": "view == codeReviewNotes.reviews",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "codeReviewNotes.add",
+          "when": "resourceScheme == file",
+          "group": "navigation@10"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "codeReviewNotes.select",
+          "when": "false"
+        },
+        {
+          "command": "codeReviewNotes.openNote",
+          "when": "false"
+        },
+        {
+          "command": "codeReviewNotes.viewNote",
+          "when": "false"
+        },
+        {
+          "command": "codeReviewNotes.editNote",
+          "when": "false"
+        },
+        {
+          "command": "codeReviewNotes.deleteNote",
+          "when": "false"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "codeReviewNotes.editReview",
+          "when": "view == codeReviewNotes.reviews && (viewItem == review)"
+        },
+        {
+          "command": "codeReviewNotes.complete",
+          "when": "view == codeReviewNotes.reviews && (viewItem == review)"
+        },
+        {
+          "command": "codeReviewNotes.copy",
+          "when": "view == codeReviewNotes.reviews && (viewItem == review || viewItem == completedReview)"
+        },
+        {
+          "command": "codeReviewNotes.export",
+          "when": "view == codeReviewNotes.reviews && (viewItem == completedReview)"
+        },
+        {
+          "command": "codeReviewNotes.viewNote",
+          "when": "view == codeReviewNotes.reviews && (viewItem == note || viewItem == savedNote)"
+        },
+        {
+          "command": "codeReviewNotes.editNote",
+          "when": "view == codeReviewNotes.reviews && (viewItem == note)"
+        },
+        {
+          "command": "codeReviewNotes.deleteNote",
+          "when": "view == codeReviewNotes.reviews && (viewItem == note)"
+        }
+      ]
+    }
   }
 }
