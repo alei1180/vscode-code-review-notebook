@@ -47,7 +47,7 @@
     "eslint": "10.10.0",
     "npm": "12.0.2",
     "prettier": "3.9.7",
-    "typescript": "7.0.2",
+    "typescript": "6.0.3",
     "typescript-eslint": "8.70.0"
   },
   "dependencies": {

@@ -100,7 +100,7 @@ export function safeName(value: string): string {
     .replace(/[<>:"/\\|?*\x00-\x1f]/g, '')
     .trim()
     .replace(/\s+/g, '-')
-    .replace(/[. ]+$/g, '');
+    .replace(/^[. ]+|[. ]+$/g, '');
   if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(result))
     result = '_' + result;
   return Array.from(result).slice(0, 60).join('') || 'task';

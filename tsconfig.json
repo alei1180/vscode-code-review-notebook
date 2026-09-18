@@ -13,7 +13,8 @@
     "noUnusedParameters": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": ["node", "vscode"]
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }
