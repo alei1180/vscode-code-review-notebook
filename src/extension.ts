@@ -5,12 +5,10 @@ import { z } from 'zod';
 import {
   createReview,
   detailsSchema,
-  noteSchema,
+  reviseNote,
   lineRange,
-  parseRange,
   reserveReport,
   validUrl,
-  severities,
   type Review,
   type Language,
   type Note,
@@ -18,6 +16,7 @@ import {
 import { Store, isCode } from './storage';
 import { strings, type Key } from './i18n';
 import { form, FieldError, type Field } from './forms';
+import { noteFields } from './note-fields';
 import { ReviewTree, type Item } from './tree';
 import { exportReport, ConflictError } from './report';
 
@@ -278,6 +277,7 @@ class Controller implements vscode.Disposable {
       {
         id: randomUUID(),
         file: path.split('\\').join('/'),
+        language: editor.document.languageId,
         start: range[0],
         end: range[1],
         comment: '',
@@ -290,32 +290,6 @@ class Controller implements vscode.Disposable {
       uri,
     );
   }
-  private noteFields(note: Note): Field[] {
-    return [
-      { name: 'file', label: 'file', value: note.file, readonly: true },
-      {
-        name: 'range',
-        label: 'range',
-        value:
-          note.start === note.end
-            ? String(note.start)
-            : `${note.start}–${note.end}`,
-      },
-      {
-        name: 'comment',
-        label: 'comment',
-        value: note.comment,
-        multiline: true,
-      },
-      { name: 'source', label: 'source', value: note.source },
-      {
-        name: 'severity',
-        label: 'severity',
-        value: note.severity,
-        options: severities.map((value) => ({ value, label: value })),
-      },
-    ];
-  }
   private noteForm(
     review: Review,
     note: Note,
@@ -324,12 +298,8 @@ class Controller implements vscode.Disposable {
     uri: vscode.Uri,
   ): void {
     this.mutable(review);
-    const fields = this.noteFields(note);
+    const fields = noteFields(note);
     const snapshot = JSON.stringify(review);
-    if (content === undefined) {
-      const range = fields.find((f) => f.name === 'range');
-      if (range) range.readonly = true;
-    }
     form(
       this.context,
       editing ? 'edit' : 'add',
@@ -340,28 +310,23 @@ class Controller implements vscode.Disposable {
           throw new FieldError('comment', 'required');
         if (!validUrl(values.source ?? ''))
           throw new FieldError('source', 'urlError');
+        if (!values.module?.trim()) throw new FieldError('module', 'required');
         const lines = content?.split(/\r?\n/);
-        let start = note.start,
-          end = note.end;
-        if (lines) {
-          try {
-            [start, end] = parseRange(values.range ?? '', lines.length);
-          } catch {
-            throw new FieldError('range', 'rangeError');
-          }
-        }
-        const parsed = noteSchema.safeParse({
+        const captured = {
           ...note,
-          start,
-          end,
-          comment: values.comment,
-          source: values.source ?? '',
-          severity: values.severity,
-          code: lines ? lines.slice(start - 1, end).join('\n') : note.code,
-        });
+          code:
+            !editing && lines
+              ? lines.slice(note.start - 1, note.end).join('\n')
+              : note.code,
+        };
+        const parsed = reviseNote(captured, values);
         if (!parsed.success)
           throw new FieldError(
-            String(parsed.error.issues[0]?.path[0] ?? 'comment'),
+            ['module', 'comment', 'source', 'severity'].includes(
+              String(parsed.error.issues[0]?.path[0]),
+            )
+              ? String(parsed.error.issues[0]?.path[0])
+              : 'comment',
             'invalid',
           );
         await this.change((db) => {
@@ -388,17 +353,11 @@ class Controller implements vscode.Disposable {
       vscode.Uri.parse(review.project),
       note.file,
     );
-    let content: string | undefined;
-    try {
-      const doc = await vscode.workspace.openTextDocument(uri);
-      if (!doc.isDirty) content = doc.getText();
-    } catch {
-      void vscode.window.showInformationMessage(t('missing'));
-    }
-    this.noteForm(review, note, content, true, uri);
+    this.noteForm(review, note, undefined, true, uri);
   }
+
   private noteViewer(review: Review, note: Note): void {
-    const fields = this.noteFields(note);
+    const fields = noteFields(note);
     fields.push({
       name: 'code',
       label: 'code',

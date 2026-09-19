@@ -19,6 +19,8 @@ export const noteSchema = z
       (p) =>
         !p.startsWith('/') && !p.includes('\\') && !p.split('/').includes('..'),
     ),
+    module: text.optional(),
+    language: z.string().max(100).optional(),
     start: z.number().int().positive(),
     end: z.number().int().positive(),
     comment: z.string().trim().min(1).max(100000),
@@ -83,19 +85,6 @@ export function lineRange(
     Math.max(start + 1, end + (endCharacter === 0 && end > start ? 0 : 1)),
   ];
 }
-export function parseRange(value: string, lineCount: number): [number, number] {
-  const match = /^(\d+)(?:\s*[-–]\s*(\d+))?$/.exec(value.trim());
-  const start = Number(match?.[1]),
-    end = Number(match?.[2] ?? match?.[1]);
-  if (
-    !Number.isSafeInteger(start) ||
-    start < 1 ||
-    end < start ||
-    end > lineCount
-  )
-    throw new Error('range');
-  return [start, end];
-}
 export function safeName(value: string): string {
   let result = value
     .normalize('NFC')
@@ -132,4 +121,14 @@ export function reserveReport(
       baseName: `${safeName(review.details.taskNumber)}_${safeName(review.details.taskTitle)}_review-${String(number).padStart(2, '0')}`,
     },
   };
+}
+
+export function reviseNote(note: Note, values: Record<string, string>) {
+  return noteSchema.safeParse({
+    ...note,
+    module: values.module,
+    comment: values.comment,
+    source: values.source ?? '',
+    severity: values.severity,
+  });
 }

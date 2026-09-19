@@ -56,6 +56,7 @@
     "typescript-eslint": "8.70.0"
   },
   "dependencies": {
+    "lowlight": "3.3.0",
     "pdfkit": "0.20.2",
     "proper-lockfile": "4.1.2",
     "zod": "4.6.5"
@@ -220,9 +221,9 @@
       ],
       "editor/context": [
         {
-          "command": "codeReviewNotes.add",
+          "submenu": "codeReviewNotes.editorMenu",
           "when": "resourceScheme == file",
-          "group": "navigation@10"
+          "group": "codeReviewNotes"
         }
       ],
       "commandPalette": [
@@ -248,6 +249,13 @@
         }
       ],
       "view/item/context": [
+        {
+          "submenu": "codeReviewNotes.itemMenu",
+          "when": "view == codeReviewNotes.reviews",
+          "group": "codeReviewNotes"
+        }
+      ],
+      "codeReviewNotes.itemMenu": [
         {
           "command": "codeReviewNotes.editReview",
           "when": "view == codeReviewNotes.reviews && (viewItem == review)"
@@ -276,8 +284,36 @@
           "command": "codeReviewNotes.deleteNote",
           "when": "view == codeReviewNotes.reviews && (viewItem == note)"
         }
+      ],
+      "codeReviewNotes.editorMenu": [
+        {
+          "command": "codeReviewNotes.start",
+          "group": "1_review"
+        },
+        {
+          "command": "codeReviewNotes.add",
+          "group": "2_notes"
+        },
+        {
+          "command": "codeReviewNotes.complete",
+          "group": "3_export"
+        },
+        {
+          "command": "codeReviewNotes.export",
+          "group": "3_export"
+        }
       ]
-    }
+    },
+    "submenus": [
+      {
+        "id": "codeReviewNotes.editorMenu",
+        "label": "Code Review Note"
+      },
+      {
+        "id": "codeReviewNotes.itemMenu",
+        "label": "Code Review Note"
+      }
+    ]
   },
   "publisher": "alei1180",
   "icon": "media/icon.png",

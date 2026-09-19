@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import {
   createReview,
   lineRange,
-  parseRange,
   reserveReport,
   safeName,
   validUrl,
@@ -21,8 +20,6 @@ const details = {
 test('selection excludes next line at column zero', () => {
   assert.deepEqual(lineRange(1, 16, 0), [2, 16]);
   assert.deepEqual(lineRange(1, 1, 0), [2, 2]);
-  assert.deepEqual(parseRange('2–16', 20), [2, 16]);
-  assert.throws(() => parseRange('9-2', 20));
 });
 test('names and URLs remain safe', () => {
   assert.equal(safeName('../CON/'), '_CON');
