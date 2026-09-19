@@ -11,3 +11,8 @@ tsconfig.json
 out/test/**
 **/*.map
 *.vsix
+out/**
+scripts/**
+node_modules/**
+pnpm-lock.yaml
+pnpm-workspace.yaml

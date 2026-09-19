@@ -3,3 +3,5 @@ out
 work
 *.vsix
 media/fonts
+
+dist

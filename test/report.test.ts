@@ -1,3 +1,4 @@
+import decompress from '../src/brotli';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -59,4 +60,32 @@ test('both formats export offline and retries are idempotent', async () => {
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('partial export can be retried without replacing an unrelated file', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'report-retry-'));
+  try {
+    const r = review();
+    assert.notEqual(r.state.status, 'draft');
+    if (r.state.status === 'draft') throw new Error('Expected reservation');
+    const destination = join(dir, r.state.report.baseName + '.pdf');
+    await writeReport(destination, Buffer.from('unrelated'));
+    const font = join(process.cwd(), 'media/fonts/NotoSans-Regular.ttf');
+    await assert.rejects(exportReport(r, dir, 'both', font), ConflictError);
+    assert.ok(
+      (await readFile(join(dir, r.state.report.baseName + '.md'))).length > 0,
+    );
+    assert.equal((await readFile(destination)).toString(), 'unrelated');
+    const other = join(dir, 'resolved');
+    await exportReport(r, other, 'both', font);
+    assert.equal(r.state.report.number, 1);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('native Brotli adapter returns font bytes losslessly', async () => {
+  const { brotliCompressSync } = await import('node:zlib');
+  const original = Buffer.from('Font bytes and кириллица');
+  assert.deepEqual(decompress(brotliCompressSync(original)), original);
 });
