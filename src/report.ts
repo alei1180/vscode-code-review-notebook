@@ -1,13 +1,15 @@
 import PDFDocument from 'pdfkit';
 import { readFile, mkdir, writeFile, link, unlink } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import { join } from 'node:path';
+import { join, dirname, extname } from 'node:path';
+import { drawCode } from './pdf-code';
 import { strings } from './i18n';
 import { severities, type Review } from './model';
 import { isCode } from './storage';
 export type Block = {
   kind: 'title' | 'heading' | 'text' | 'code' | 'link';
   text: string;
+  language?: string;
 };
 export function reportBlocks(review: Review): Block[] {
   if (review.state.status === 'draft') throw new Error('Unreserved report');
@@ -40,11 +42,15 @@ export function reportBlocks(review: Review): Block[] {
       blocks.push(
         {
           kind: 'heading',
-          text: `${++index}. ${note.file}:${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
+          text: `${++index}. ${t.file}: ${note.module ?? note.file}:${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
         },
         { kind: 'text', text: note.comment },
         { kind: 'text', text: t.code },
-        { kind: 'code', text: note.code },
+        {
+          kind: 'code',
+          text: note.code,
+          language: note.language ?? extname(note.file).slice(1).toLowerCase(),
+        },
       );
       if (note.source)
         blocks.push(
@@ -107,19 +113,23 @@ export async function pdf(
     doc.on('error', reject);
   });
   for (const block of blocks) {
+    if (block.kind === 'code') {
+      await drawCode(
+        doc,
+        block.text,
+        block.language ?? '',
+        join(dirname(font), 'NotoSansMono-Regular.ttf'),
+      );
+      doc.font(font);
+      continue;
+    }
     if (block.kind === 'title' || block.kind === 'heading') {
       if (doc.y > 730) doc.addPage();
       doc.moveDown(0.5);
     }
     doc
       .fontSize(
-        block.kind === 'title'
-          ? 22
-          : block.kind === 'heading'
-            ? 13
-            : block.kind === 'code'
-              ? 9
-              : 10,
+        block.kind === 'title' ? 22 : block.kind === 'heading' ? 13 : 10,
       )
       .fillColor(block.kind === 'link' ? '#165db5' : '#202632')
       .text(block.text, {

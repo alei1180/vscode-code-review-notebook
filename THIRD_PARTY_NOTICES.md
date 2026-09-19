@@ -7,11 +7,14 @@ Runtime components included in the bundle. Complete license texts are in [THIRD_
 - @swc/helpers 0.5.23 — Apache-2.0
 - base64-js 0.0.8 — MIT
 - clone 2.1.2 — MIT
+- devlop 1.1.0 — MIT
 - dfa 1.2.0 — MIT
 - fast-deep-equal 3.1.3 — MIT
 - fontkit 2.0.4 — MIT
 - graceful-fs 4.2.11 — ISC
+- highlight.js 11.11.2 — BSD-3-Clause
 - linebreak 1.1.0 — MIT
+- lowlight 3.3.0 — MIT
 - pdfkit 0.20.2 — MIT
 - png-js 2.0.0 — "See included license text"
 - proper-lockfile 4.1.2 — MIT

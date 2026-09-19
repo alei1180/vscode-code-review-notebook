@@ -17,6 +17,18 @@ async function main() {
     assignee: 'Tester',
     reviewer: 'Reviewer',
   });
+  review.notes.push({
+    id: require('node:crypto').randomUUID(),
+    file: 'example.ts',
+    language: 'typescript',
+    module: 'Payments',
+    start: 1,
+    end: 2,
+    comment: 'Check amount',
+    source: '',
+    severity: 'major',
+    code: 'const amount: number = 42;\n// Проверка суммы',
+  });
   reserveReport(review, [review], 'ru');
   const directory = await fs.mkdtemp(path.resolve('work/bundle-test/export-'));
   try {
