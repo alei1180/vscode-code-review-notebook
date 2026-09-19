@@ -58,7 +58,7 @@ async function main() {
         '\n';
   }
   notices +=
-    '\nNoto Sans is included under the SIL Open Font License 1.1; see [font license](media/fonts/LICENSE.txt). The extension icon is original project artwork.\n';
+    '\nNoto Sans and Noto Sans Mono are included under the SIL Open Font License 1.1; see [font license](media/fonts/LICENSE.txt). The extension icon is original project artwork.\n';
   await fs.writeFile('THIRD_PARTY_NOTICES.md', notices);
   await fs.writeFile('THIRD_PARTY_LICENSES.txt', licenses);
 }

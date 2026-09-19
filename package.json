@@ -2,7 +2,7 @@
   "name": "vscode-code-review-notes",
   "displayName": "Code Review Notes",
   "description": "Manual code reviews with local notes and Markdown or PDF reports.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "engines": {
     "vscode": "^1.96.0",
@@ -28,7 +28,7 @@
     "pdf"
   ],
   "scripts": {
-    "build": "tsc -p . && node scripts/build.cjs",
+    "build": "node scripts/clean.cjs && tsc -p . && node scripts/build.cjs",
     "check": "tsc --noEmit",
     "test": "npm run build && node --test out/test/*.test.js && node scripts/test-bundle.cjs",
     "lint": "eslint src test",

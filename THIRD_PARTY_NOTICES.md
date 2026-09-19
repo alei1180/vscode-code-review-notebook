@@ -27,4 +27,4 @@ Runtime components included in the bundle. Complete license texts are in [THIRD_
 - unicode-trie 2.0.0 — MIT
 - zod 4.6.5 — MIT
 
-Noto Sans is included under the SIL Open Font License 1.1; see [font license](media/fonts/LICENSE.txt). The extension icon is original project artwork.
+Noto Sans and Noto Sans Mono are included under the SIL Open Font License 1.1; see [font license](media/fonts/LICENSE.txt). The extension icon is original project artwork.

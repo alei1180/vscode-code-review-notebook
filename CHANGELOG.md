@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1
+
+- Group context actions under Code Review Note.
+- Replace File with editable Module / Модуль; preserve the original file for navigation.
+- Lock line ranges and preserve code snapshots when editing notes.
+- Add offline PDF syntax highlighting, a Cyrillic monospace font and wrapped code blocks across pages.
+- Keep existing reviews compatible; infer languages for old notes from the source extension.
+
 ## 0.1.0
 
 - Manual reviews with task metadata and multiple concurrent drafts.

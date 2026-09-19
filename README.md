@@ -18,11 +18,17 @@ Manual code reviews in VS Code. Collect notes beside your code and export a loca
 
 1. Open a trusted local project and select **Code Review Notes** in the activity bar.
 2. Choose **Start Code Review**, fill in the four fields and save.
-3. Open a saved file, select lines, then use **Code Review Notes: Add Review Note** from the editor context menu or Command Palette. The default shortcut is `Ctrl+Alt+R` (`Cmd+Alt+R` on macOS).
+3. Open a saved file, select lines, then use **Code Review Notes: Add Review Note** from the **Code Review Note** editor submenu or Command Palette. The default shortcut is `Ctrl+Alt+R` (`Cmd+Alt+R` on macOS).
 4. Choose the review, enter a comment, severity and optional source URL, and save.
 5. Use a review's context menu to **Complete Review**. Choose Markdown, PDF or both.
 
 Right-click notes to view their saved contents, edit or delete them. Click a note to open its original location. Completed reviews remain available for export and can be copied into a new review for the same task.
+
+## Modules and code snippets
+
+The **Module** field is editable and initially contains the source path. Renaming it changes the sidebar and report label while preserving the original file for navigation. Line ranges are read-only and always come from the editor selection. Editing a comment does not recapture or move its saved code.
+
+PDF code uses offline syntax highlighting and a Cyrillic monospace font. The language is captured from VS Code; older notes use the original file extension. Unknown languages and snippets over 100,000 characters are rendered as plain code. Existing exported files are not overwritten: after an update changes report formatting, choose a different output folder to regenerate an old report.
 
 ## Settings
 
@@ -48,7 +54,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.0.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.1.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 

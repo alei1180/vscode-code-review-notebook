@@ -33,3 +33,9 @@ Before publishing, run the manual checklist below and the CI matrix. Do not desc
 8. Verify empty reviews, filename conflicts, unavailable output folders and export retries.
 9. Inspect long Cyrillic text, code and source links in PDF; test light/dark/high-contrast themes and keyboard navigation.
 10. Capture screenshots of creation, note editing and the review tree using only demonstration data, add them to README, then push the reviewed assets before publication.
+
+## Version 0.1.1 changes
+
+17 automated tests cover the original behavior plus editable module labels, immutable source coordinates and code, submenu grouping, legacy notes and syntax tokens for TypeScript and 1C/BSL. Bundled export includes a highlighted snippet. A four-page report with Cyrillic, tabs, long lines and a multi-page BSL snippet was visually checked. Native UI interaction remains outside the automated integration checks.
+
+The 0.1.1 VSIX was installed in the isolated profile and passed the activation, commands, form and live language-switch integration checks on macOS. Production dependency audit reported zero known advisories.
