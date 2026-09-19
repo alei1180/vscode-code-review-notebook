@@ -1,12 +1,6 @@
-import {
-  mkdir,
-  readFile,
-  writeFile,
-  rename,
-  unlink,
-  open,
-} from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
 import { join } from 'node:path';
+import { lock } from 'proper-lockfile';
 import { databaseSchema, type Database } from './model';
 
 export class Store {
@@ -27,19 +21,29 @@ export class Store {
   }
   async transaction<T>(change: (db: Database) => Promise<T> | T): Promise<T> {
     await mkdir(this.directory, { recursive: true });
-    // Exclusive file creation also prevents writers in other VS Code windows.
-    const lock = await open(join(this.directory, 'write.lock'), 'wx');
+    let compromised = false;
+    // Heartbeats distinguish a live writer from a crashed extension host.
+    const release = await lock(this.file, {
+      realpath: false,
+      stale: 30000,
+      update: 5000,
+      retries: 0,
+      onCompromised: () => {
+        compromised = true;
+      },
+    });
     try {
       const db = await this.read();
       const result = await change(db);
       databaseSchema.parse(db);
+      if (compromised) throw new Error('Storage lock lost');
       const temporary = this.file + '.tmp';
       await writeFile(temporary, JSON.stringify(db, null, 2), { mode: 0o600 });
+      if (compromised) throw new Error('Storage lock lost');
       await rename(temporary, this.file);
       return result;
     } finally {
-      await lock.close();
-      await unlink(join(this.directory, 'write.lock'));
+      if (!compromised) await release();
     }
   }
 }

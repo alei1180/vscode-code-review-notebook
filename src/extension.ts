@@ -121,7 +121,7 @@ class Controller implements vscode.Disposable {
         ? error.key
         : error instanceof ConflictError
           ? 'conflict'
-          : isCode(error, 'EEXIST')
+          : isCode(error, 'EEXIST') || isCode(error, 'ELOCKED')
             ? 'busy'
             : 'error';
     // Avoid logging user content, file paths, or schema input values.

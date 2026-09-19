@@ -32,7 +32,9 @@ const exportSchema = z.object({
   number: z.number().int().positive(),
   date: z.string().datetime(),
   language: languageSchema,
-  baseName: text,
+  baseName: text.refine(
+    (value) => !/[<>:"/\\|?*]/.test(value) && value !== '.' && value !== '..',
+  ),
 });
 export const reviewSchema = z.object({
   id: z.string().uuid(),
@@ -103,7 +105,9 @@ export function safeName(value: string): string {
     .replace(/^[. ]+|[. ]+$/g, '');
   if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(result))
     result = '_' + result;
-  return Array.from(result).slice(0, 60).join('') || 'task';
+  const points = Array.from(result).slice(0, 60);
+  while (Buffer.byteLength(points.join(''), 'utf8') > 90) points.pop();
+  return points.join('').replace(/[. ]+$/g, '') || 'task';
 }
 export function reserveReport(
   review: Review,

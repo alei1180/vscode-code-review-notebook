@@ -53,3 +53,44 @@ test('storage survives reopen and does not overwrite corrupt data', async () => 
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test('concurrent writers cannot overwrite an active transaction', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'review-lock-'));
+  try {
+    const store = new Store(dir);
+    let release: (() => void) | undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let started: (() => void) | undefined;
+    const ready = new Promise<void>((resolve) => {
+      started = resolve;
+    });
+    const first = store.transaction(async (db) => {
+      started?.();
+      await gate;
+      db.reviews.push(createReview('project', details));
+    });
+    await ready;
+    await assert.rejects(new Store(dir).transaction(() => {}));
+    release?.();
+    await first;
+    assert.equal((await store.read()).reviews.length, 1);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('Unicode filenames fit common filesystem component limits', () => {
+  const r = createReview('project', {
+    ...details,
+    taskNumber: '任'.repeat(200),
+    taskTitle: '🙂'.repeat(200),
+  });
+  reserveReport(r, [r], 'en');
+  assert.notEqual(r.state.status, 'draft');
+  if (r.state.status !== 'draft')
+    assert.ok(
+      Buffer.byteLength(r.state.report.baseName + '.pdf', 'utf8') < 255,
+    );
+});
