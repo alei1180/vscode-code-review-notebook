@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.6
+
+- Use Noto Sans for report text and headings, matching the sans-serif interface style.
+- Preserve FreeMono and syntax highlighting for code snapshots.
+
 ## 0.1.5
 
 - Add general notes without code lines, optionally attached to a project file.
