@@ -5,6 +5,8 @@ import { z } from 'zod';
 import {
   createReview,
   detailsSchema,
+  reviewSchema,
+  noteSchema,
   reviseNote,
   lineRange,
   reserveReport,
@@ -31,6 +33,10 @@ const language = (): Language =>
     : 'en';
 const t = (key: Key): string => strings(language())[key];
 const formatSchema = z.enum(['markdown', 'pdf', 'both']);
+const itemSchema = z.object({
+  review: reviewSchema,
+  note: noteSchema.optional(),
+});
 export function activate(context: vscode.ExtensionContext): void {
   const controller = new Controller(context);
   context.subscriptions.push(controller);
@@ -63,7 +69,17 @@ class Controller implements vscode.Disposable {
       this.disposables.push(
         vscode.commands.registerCommand(
           'codeReviewNotes.' + name,
-          (item?: Item) => action(item).catch((error) => this.error(error)),
+          (argument: unknown) => {
+            // Editor context menus pass a URI; only our tree passes a review item.
+            const parsed = itemSchema.safeParse(argument);
+            const item: Item | undefined = parsed.success
+              ? {
+                  review: parsed.data.review,
+                  ...(parsed.data.note ? { note: parsed.data.note } : {}),
+                }
+              : undefined;
+            return action(item).catch((error) => this.error(error));
+          },
         ),
       );
     command('start', () => this.start());

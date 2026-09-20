@@ -30,7 +30,7 @@
   "scripts": {
     "build": "node scripts/clean.cjs && tsc -p . && node scripts/build.cjs",
     "check": "tsc --noEmit",
-    "test": "npm run build && node --test out/test/*.test.js && node scripts/test-bundle.cjs",
+    "test": "npm run build && node --test out/test/*.test.js && node scripts/test-bundle.cjs && node scripts/test-commands.cjs",
     "lint": "eslint src test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
