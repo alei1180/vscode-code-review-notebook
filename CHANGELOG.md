@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4
+
+- Keep FreeMono bold only for report headers, severity headings and module headings; use regular text for comments, code and links.
+- Reduce line spacing and paragraph gaps in the report header.
+
 ## 0.1.3
 
 - Add an editable Review Number field (default 1) with English/Russian labels, positive integer validation and task-specific duplicate protection.
