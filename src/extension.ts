@@ -10,6 +10,7 @@ import {
   reviseNote,
   lineRange,
   reserveReport,
+  ReviewNumberConflictError,
   validUrl,
   type Review,
   type Language,
@@ -134,11 +135,13 @@ class Controller implements vscode.Disposable {
     const key =
       error instanceof UserError
         ? error.key
-        : error instanceof ConflictError
-          ? 'conflict'
-          : isCode(error, 'EEXIST') || isCode(error, 'ELOCKED')
-            ? 'busy'
-            : 'error';
+        : error instanceof ReviewNumberConflictError
+          ? 'numberConflict'
+          : error instanceof ConflictError
+            ? 'conflict'
+            : isCode(error, 'EEXIST') || isCode(error, 'ELOCKED')
+              ? 'busy'
+              : 'error';
     // Avoid logging user content, file paths, or schema input values.
     this.output.appendLine(
       `${new Date().toISOString()} ${error instanceof Error ? error.name : 'UnknownError'} (${key})`,
@@ -231,6 +234,12 @@ class Controller implements vscode.Disposable {
       label: name,
       value: (existing ?? copy)?.details[name] ?? '',
     }));
+    fields.push({
+      name: 'reviewNumber',
+      label: 'number',
+      value: String(existing?.details.reviewNumber ?? 1),
+      numeric: true,
+    });
     const snapshot = existing ? JSON.stringify(existing) : undefined;
     form(
       this.context,
@@ -241,13 +250,30 @@ class Controller implements vscode.Disposable {
         for (const field of fields)
           if (!values[field.name]?.trim())
             throw new FieldError(field.name, 'required');
-        const parsed = detailsSchema.safeParse(values);
+        if (!/^[1-9]\d*$/.test(values.reviewNumber ?? ''))
+          throw new FieldError('reviewNumber', 'invalid');
+        const parsed = detailsSchema.safeParse({
+          ...values,
+          reviewNumber: Number(values.reviewNumber),
+        });
         if (!parsed.success)
           throw new FieldError(
             String(parsed.error.issues[0]?.path[0] ?? 'taskTitle'),
             'invalid',
           );
         await this.change((db) => {
+          if (
+            db.reviews.some(
+              (r) =>
+                r.id !== existing?.id &&
+                r.project === project &&
+                r.details.taskNumber === parsed.data.taskNumber &&
+                (r.state.status === 'draft'
+                  ? r.details.reviewNumber
+                  : r.state.report.number) === parsed.data.reviewNumber,
+            )
+          )
+            throw new FieldError('reviewNumber', 'numberConflict');
           if (existing) {
             const r = this.current(db.reviews, existing.id);
             this.mutable(r);
@@ -455,7 +481,7 @@ class Controller implements vscode.Disposable {
                 this.context.extensionPath,
                 'media',
                 'fonts',
-                'NotoSans-Regular.ttf',
+                'FreeMonoBold.ttf',
               ),
             );
             r.state = { status: 'completed', report: r.state.report };

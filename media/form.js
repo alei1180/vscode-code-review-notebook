@@ -57,6 +57,12 @@
           input.readOnly = readonly || field.readonly;
           input.maxLength = field.multiline ? 100000 : 4000;
         }
+        if (field.numeric) {
+          input.type = 'number';
+          input.min = '1';
+          input.max = String(Number.MAX_SAFE_INTEGER);
+          input.step = '1';
+        }
         if (field.multiline) input.rows = field.name === 'code' ? 12 : 7;
         input.addEventListener('input', () => {
           vscode.setState(values());

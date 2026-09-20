@@ -28,7 +28,7 @@ Right-click notes to view their saved contents, edit or delete them. Click a not
 
 The **Module** field is editable and initially contains the source path. Renaming it changes the sidebar and report label while preserving the original file for navigation. Line ranges are read-only and always come from the editor selection. Editing a comment does not recapture or move its saved code.
 
-PDF code uses offline syntax highlighting and a Cyrillic monospace font. The language is captured from VS Code; older notes use the original file extension. Unknown languages and snippets over 100,000 characters are rendered as plain code. Existing exported files are not overwritten: after an update changes report formatting, choose a different output folder to regenerate an old report.
+PDF reports use an embedded FreeMono Bold typewriter font with Cyrillic support; code keeps offline syntax highlighting. The language is captured from VS Code; older notes use the original file extension. Unknown languages and snippets over 100,000 characters are rendered as plain code. Existing exported files are not overwritten: after an update changes report formatting, choose a different output folder to regenerate an old report.
 
 ## Settings
 
@@ -40,7 +40,7 @@ PDF code uses offline syntax highlighting and a Cyrillic monospace font. The lan
 
 Changing the language preserves values in open forms. Static Command Palette entries, context menus and Settings descriptions follow the VS Code display language. Report labels use the extension language at completion; later exports keep that language.
 
-Report example: `SHOP-142_Add-payment_review-01.pdf`. The number increments per task number and project. Re-exporting keeps the number. Different existing content is never silently overwritten; change the report directory to resolve a conflict.
+Report example: `SHOP-142_Add-payment_review-01.pdf`. Set Review Number in the start form (default 1). It must be a positive integer unique within the task and project. Legacy drafts without an explicit number keep automatic numbering. Re-exporting keeps the number. Different existing content is never silently overwritten; change the report directory to resolve a conflict.
 
 ## Data and limitations
 

@@ -10,6 +10,12 @@ export const detailsSchema = z.object({
   taskNumber: text,
   assignee: text,
   reviewer: text,
+  reviewNumber: z
+    .number()
+    .int()
+    .positive()
+    .max(Number.MAX_SAFE_INTEGER)
+    .optional(),
 });
 export type Details = z.infer<typeof detailsSchema>;
 export const noteSchema = z
@@ -98,6 +104,8 @@ export function safeName(value: string): string {
   while (Buffer.byteLength(points.join(''), 'utf8') > 90) points.pop();
   return points.join('').replace(/[. ]+$/g, '') || 'task';
 }
+export class ReviewNumberConflictError extends Error {}
+
 export function reserveReport(
   review: Review,
   all: Review[],
@@ -111,7 +119,19 @@ export function reserveReport(
         r.details.taskNumber === review.details.taskNumber,
     )
     .map((r) => (r.state.status === 'draft' ? 0 : r.state.report.number));
-  const number = Math.max(0, ...numbers) + 1;
+  const number = review.details.reviewNumber ?? Math.max(0, ...numbers) + 1;
+  if (
+    all.some(
+      (other) =>
+        other.id !== review.id &&
+        other.project === review.project &&
+        other.details.taskNumber === review.details.taskNumber &&
+        (other.state.status === 'draft'
+          ? other.details.reviewNumber
+          : other.state.report.number) === number,
+    )
+  )
+    throw new ReviewNumberConflictError();
   review.state = {
     status: 'exporting',
     report: {

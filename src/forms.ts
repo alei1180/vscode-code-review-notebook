@@ -8,6 +8,7 @@ export type Field = {
   label: Key;
   value: string;
   multiline?: boolean;
+  numeric?: boolean;
   readonly?: boolean;
   options?: { value: string; label: Key }[];
 };

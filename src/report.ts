@@ -118,7 +118,7 @@ export async function pdf(
         doc,
         block.text,
         block.language ?? '',
-        join(dirname(font), 'NotoSansMono-Regular.ttf'),
+        join(dirname(font), 'FreeMonoBold.ttf'),
       );
       doc.font(font);
       continue;

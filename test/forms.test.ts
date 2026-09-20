@@ -98,3 +98,31 @@ test('form sends values and recovers from localized field validation', async () 
     dom.window.close();
   }
 });
+
+test('review number defaults to one and survives a language change', async () => {
+  const { dom, send } = await setup();
+  try {
+    send({
+      type: 'init',
+      readonly: false,
+      fields: [
+        { name: 'reviewNumber', label: 'number', value: '1', numeric: true },
+      ],
+    });
+    const input = dom.window.document.getElementById(
+      'reviewNumber',
+    ) as HTMLInputElement;
+    assert.equal(input.type, 'number');
+    assert.equal(input.min, '1');
+    assert.equal(input.value, '1');
+    input.value = '7';
+    send({ type: 'labels', labels: ru, title: 'start', language: 'ru' });
+    assert.equal(input.value, '7');
+    assert.equal(
+      dom.window.document.querySelector('label[for=reviewNumber]')?.textContent,
+      ru.number,
+    );
+  } finally {
+    dom.window.close();
+  }
+});

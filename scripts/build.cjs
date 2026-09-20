@@ -58,7 +58,7 @@ async function main() {
         '\n';
   }
   notices +=
-    '\nNoto Sans and Noto Sans Mono are included under the SIL Open Font License 1.1; see [font license](media/fonts/LICENSE.txt). The extension icon is original project artwork.\n';
+    '\nGNU FreeMono (20120503) is included under GPLv3+ with the font embedding exception; see [license](media/fonts/FreeMono-COPYING.txt) and [exception](media/fonts/FreeMono-README.txt). The corresponding original source archive is included at media/fonts/freefont-src-20120503.tar.gz. Upstream: https://www.gnu.org/software/freefont/. Noto Sans and Noto Sans Mono are included under the SIL Open Font License 1.1; see [font license](media/fonts/LICENSE.txt). The extension icon is original project artwork.\n';
   await fs.writeFile('THIRD_PARTY_NOTICES.md', notices);
   await fs.writeFile('THIRD_PARTY_LICENSES.txt', licenses);
 }

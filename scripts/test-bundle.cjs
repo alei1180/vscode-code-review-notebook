@@ -36,7 +36,7 @@ async function main() {
       review,
       directory,
       'both',
-      path.resolve('media/fonts/NotoSans-Regular.ttf'),
+      path.resolve('media/fonts/FreeMonoBold.ttf'),
     );
     assert.equal(files.length, 2);
     assert.equal(

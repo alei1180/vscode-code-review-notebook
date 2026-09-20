@@ -45,6 +45,8 @@ export const en = {
   noNotes: 'No review notes.',
   report: 'Code Review Report',
   number: 'Review Number',
+  numberConflict:
+    'This review number is already used for this task. Choose another number.',
   started: 'Started',
   finished: 'Completed',
   total: 'Total notes',
@@ -113,6 +115,8 @@ export const ru: Record<Key, string> = {
   noNotes: 'Замечаний нет.',
   report: 'Отчёт о код-ревью',
   number: 'Номер ревью',
+  numberConflict:
+    'Этот номер ревью уже занят для данной задачи. Укажите другой номер.',
   started: 'Начало',
   finished: 'Завершение',
   total: 'Всего замечаний',

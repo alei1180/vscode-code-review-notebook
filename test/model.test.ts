@@ -91,3 +91,31 @@ test('Unicode filenames fit common filesystem component limits', () => {
       Buffer.byteLength(r.state.report.baseName + '.pdf', 'utf8') < 255,
     );
 });
+
+test('explicit review numbers survive storage and determine report filenames', async () => {
+  const { databaseSchema, detailsSchema, ReviewNumberConflictError } =
+    await import('../src/model.js');
+  for (const reviewNumber of [0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1])
+    assert.equal(
+      detailsSchema.safeParse({ ...details, reviewNumber }).success,
+      false,
+    );
+  const a = createReview('project', { ...details, reviewNumber: 7 });
+  const db = databaseSchema.parse(
+    JSON.parse(JSON.stringify({ version: 1, reviews: [a], active: a.id })),
+  );
+  const restored = db.reviews[0]!;
+  reserveReport(restored, db.reviews, 'ru');
+  assert.ok(restored.state.status !== 'draft');
+  assert.equal(restored.state.report.number, 7);
+  assert.ok(restored.state.report.baseName.endsWith('_review-07'));
+  const duplicate = createReview('project', { ...details, reviewNumber: 7 });
+  assert.throws(
+    () => reserveReport(duplicate, [restored, duplicate], 'en'),
+    ReviewNumberConflictError,
+  );
+  assert.equal(duplicate.state.status, 'draft');
+  const other = createReview('other-project', { ...details, reviewNumber: 7 });
+  reserveReport(other, [restored, other], 'en');
+  assert.equal(other.state.status !== 'draft' && other.state.report.number, 7);
+});
