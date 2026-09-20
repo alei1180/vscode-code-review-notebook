@@ -14,5 +14,6 @@
   "view.welcome": "[Начать ревью](command:codeReviewNotes.start)",
   "setting.language": "Язык форм и сообщений расширения. Команды используют язык VS Code.",
   "setting.format": "Формат отчёта по умолчанию.",
-  "setting.directory": "Папка отчётов: абсолютный путь или путь относительно проекта."
+  "setting.directory": "Папка отчётов: абсолютный путь или путь относительно проекта.",
+  "command.addGeneral": "Добавить общее замечание"
 }

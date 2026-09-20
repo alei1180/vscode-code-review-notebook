@@ -1,8 +1,12 @@
 import type { Field } from './forms';
 import { severities, type Note } from './model';
 export function noteFields(note: Note): Field[] {
-  return [
-    { name: 'module', label: 'file', value: note.module ?? note.file },
+  const fields: Field[] = [
+    {
+      name: 'module',
+      label: note.general ? 'optionalModule' : 'file',
+      value: note.module ?? note.file,
+    },
     {
       name: 'range',
       label: 'range',
@@ -21,4 +25,7 @@ export function noteFields(note: Note): Field[] {
       options: severities.map((value) => ({ value, label: value })),
     },
   ];
+  return note.general
+    ? fields.filter((field) => field.name !== 'range')
+    : fields;
 }

@@ -25,7 +25,7 @@ test('report uses edited module and original source language for legacy notes', 
   review.notes.push({ ...original(), module: 'Оплата' });
   reserveReport(review, [review], 'ru');
   const blocks = reportBlocks(review);
-  assert.ok(blocks.some((b) => b.text.includes('Модуль: Оплата:2–16')));
+  assert.ok(blocks.some((b) => b.text === '1. Оплата'));
   assert.equal(blocks.find((b) => b.kind === 'code')?.language, 'ts');
 });
 test('syntax tokens preserve code and distinguish keywords, strings and numbers', async () => {

@@ -85,6 +85,7 @@ class Controller implements vscode.Disposable {
       );
     command('start', () => this.start());
     command('add', () => this.add());
+    command('addGeneral', (item) => this.addGeneral(item));
     command('select', async (item) => {
       if (item)
         await this.change((db) => {
@@ -332,19 +333,66 @@ class Controller implements vscode.Disposable {
       uri,
     );
   }
+  private async addGeneral(item?: Item): Promise<void> {
+    const review = await this.pick(item, true);
+    if (!review) return;
+    this.mutable(review);
+    const choice = await vscode.window.showQuickPick(
+      [
+        { label: t('unbound'), attached: false },
+        { label: t('chooseFile'), attached: true },
+      ],
+      { title: t('addGeneral') },
+    );
+    if (!choice) return;
+    let uri: vscode.Uri | undefined;
+    let file = '';
+    if (choice.attached) {
+      const root = vscode.Uri.parse(review.project);
+      const selected = await vscode.window.showOpenDialog({
+        defaultUri: root,
+        canSelectFiles: true,
+        canSelectFolders: false,
+        canSelectMany: false,
+        title: t('chooseFile'),
+      });
+      uri = selected?.[0];
+      if (!uri) return;
+      file = relative(root.fsPath, uri.fsPath).split('\\').join('/');
+      if (uri.scheme !== 'file' || file.startsWith('..') || isAbsolute(file))
+        throw new UserError('unavailable');
+    }
+    this.noteForm(
+      review,
+      {
+        id: randomUUID(),
+        general: true,
+        file,
+        start: 0,
+        end: 0,
+        comment: '',
+        source: '',
+        severity: 'minor',
+        code: '',
+      },
+      undefined,
+      false,
+      uri,
+    );
+  }
   private noteForm(
     review: Review,
     note: Note,
     content: string | undefined,
     editing: boolean,
-    uri: vscode.Uri,
+    uri: vscode.Uri | undefined,
   ): void {
     this.mutable(review);
     const fields = noteFields(note);
     const snapshot = JSON.stringify(review);
     form(
       this.context,
-      editing ? 'edit' : 'add',
+      editing ? 'edit' : note.general ? 'addGeneral' : 'add',
       fields,
       language,
       async (values) => {
@@ -352,15 +400,18 @@ class Controller implements vscode.Disposable {
           throw new FieldError('comment', 'required');
         if (!validUrl(values.source ?? ''))
           throw new FieldError('source', 'urlError');
-        if (!values.module?.trim()) throw new FieldError('module', 'required');
+        if (!note.general && !values.module?.trim())
+          throw new FieldError('module', 'required');
         const lines = content?.split(/\r?\n/);
-        const captured = {
-          ...note,
-          code:
-            !editing && lines
-              ? lines.slice(note.start - 1, note.end).join('\n')
-              : note.code,
-        };
+        const captured = note.general
+          ? note
+          : {
+              ...note,
+              code:
+                !editing && lines
+                  ? lines.slice(note.start - 1, note.end).join('\n')
+                  : note.code,
+            };
         const parsed = reviseNote(captured, values);
         if (!parsed.success)
           throw new FieldError(
@@ -381,6 +432,7 @@ class Controller implements vscode.Disposable {
             r.notes[index] = parsed.data;
           } else r.notes.push(parsed.data);
         });
+        if (!uri) return;
         try {
           await vscode.window.showTextDocument(uri);
         } catch {
@@ -391,21 +443,21 @@ class Controller implements vscode.Disposable {
     );
   }
   private async editNote(review: Review, note: Note): Promise<void> {
-    const uri = vscode.Uri.joinPath(
-      vscode.Uri.parse(review.project),
-      note.file,
-    );
+    const uri = note.file
+      ? vscode.Uri.joinPath(vscode.Uri.parse(review.project), note.file)
+      : undefined;
     this.noteForm(review, note, undefined, true, uri);
   }
 
   private noteViewer(review: Review, note: Note): void {
     const fields = noteFields(note);
-    fields.push({
-      name: 'code',
-      label: 'code',
-      value: note.code,
-      multiline: true,
-    });
+    if (!note.general)
+      fields.push({
+        name: 'code',
+        label: 'code',
+        value: note.code,
+        multiline: true,
+      });
     form(
       this.context,
       'comment',
@@ -418,10 +470,18 @@ class Controller implements vscode.Disposable {
     void review;
   }
   private async openNote(review: Review, note: Note): Promise<void> {
+    if (!note.file) {
+      this.noteViewer(review, note);
+      return;
+    }
     try {
       const doc = await vscode.workspace.openTextDocument(
         vscode.Uri.joinPath(vscode.Uri.parse(review.project), note.file),
       );
+      if (note.general) {
+        await vscode.window.showTextDocument(doc);
+        return;
+      }
       if (note.start > doc.lineCount) throw new UserError('missing');
       await vscode.window.showTextDocument(doc, {
         selection: new vscode.Range(

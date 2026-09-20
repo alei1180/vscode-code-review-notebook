@@ -144,6 +144,12 @@
         "title": "%command.deleteNote%",
         "category": "Code Review Notes",
         "icon": "$(trash)"
+      },
+      {
+        "command": "codeReviewNotes.addGeneral",
+        "title": "%command.addGeneral%",
+        "category": "Code Review Notes",
+        "icon": "$(comment)"
       }
     ],
     "viewsContainers": {
@@ -188,7 +194,7 @@
           ],
           "enumDescriptions": [
             "English",
-            "\u0420\u0443\u0441\u0441\u043a\u0438\u0439"
+            "Русский"
           ],
           "default": "en",
           "scope": "application",
@@ -215,6 +221,11 @@
       "view/title": [
         {
           "command": "codeReviewNotes.start",
+          "when": "view == codeReviewNotes.reviews",
+          "group": "navigation"
+        },
+        {
+          "command": "codeReviewNotes.addGeneral",
           "when": "view == codeReviewNotes.reviews",
           "group": "navigation"
         }
@@ -283,6 +294,10 @@
         {
           "command": "codeReviewNotes.deleteNote",
           "when": "view == codeReviewNotes.reviews && (viewItem == note)"
+        },
+        {
+          "command": "codeReviewNotes.addGeneral",
+          "when": "view == codeReviewNotes.reviews && viewItem == review"
         }
       ],
       "codeReviewNotes.editorMenu": [
@@ -301,6 +316,10 @@
         {
           "command": "codeReviewNotes.export",
           "group": "3_export"
+        },
+        {
+          "command": "codeReviewNotes.addGeneral",
+          "group": "2_notes"
         }
       ]
     },

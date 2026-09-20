@@ -7,7 +7,14 @@ export async function run(): Promise<void> {
   assert.ok(extension, 'Extension must be discovered');
   await extension.activate();
   const commands = await vscode.commands.getCommands(true);
-  for (const name of ['start', 'add', 'complete', 'export', 'viewNote'])
+  for (const name of [
+    'start',
+    'add',
+    'addGeneral',
+    'complete',
+    'export',
+    'viewNote',
+  ])
     assert.ok(commands.includes('codeReviewNotes.' + name));
   const configuration = vscode.workspace.getConfiguration('codeReviewNotes');
   assert.equal(configuration.get('language'), 'en');

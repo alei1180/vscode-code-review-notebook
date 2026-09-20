@@ -26,7 +26,9 @@ export class ReviewTree
         `${t[note.severity]} · ${note.comment.split('\n')[0] ?? ''}`,
         vscode.TreeItemCollapsibleState.None,
       );
-      tree.description = `${note.module ?? note.file}:${note.start}${note.end !== note.start ? `–${note.end}` : ''}`;
+      tree.description = note.general
+        ? note.module || note.file || t.general
+        : `${note.module ?? note.file}:${note.start}${note.end !== note.start ? `–${note.end}` : ''}`;
       tree.id = note.id;
       tree.tooltip = note.comment;
       tree.contextValue =

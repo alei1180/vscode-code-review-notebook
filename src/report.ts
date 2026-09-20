@@ -33,7 +33,7 @@ export function reportBlocks(review: Review): Block[] {
     blocks.push({
       kind: 'text',
       header: true,
-      text: `${t[severity]}: ${review.notes.filter((n) => n.severity === severity).length}`,
+      text: `${t[severity]}: ${review.notes.filter((n) => n.severity === severity).length} — ${t[`${severity}Help`]}`,
     });
   if (!review.notes.length) blocks.push({ kind: 'text', text: t.noNotes });
   let index = 0;
@@ -44,16 +44,24 @@ export function reportBlocks(review: Review): Block[] {
       blocks.push(
         {
           kind: 'heading',
-          text: `${++index}. ${t.file}: ${note.module ?? note.file}:${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
+          text: `${++index}. ${note.module || note.file || t.general}`,
         },
         { kind: 'text', text: note.comment },
-        { kind: 'text', text: t.code },
-        {
-          kind: 'code',
-          text: note.code,
-          language: note.language ?? extname(note.file).slice(1).toLowerCase(),
-        },
       );
+      if (!note.general)
+        blocks.push(
+          {
+            kind: 'text',
+            text: `${t.range}: ${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
+          },
+          { kind: 'text', text: t.code },
+          {
+            kind: 'code',
+            text: note.code,
+            language:
+              note.language ?? extname(note.file).slice(1).toLowerCase(),
+          },
+        );
       if (note.source)
         blocks.push(
           { kind: 'text', text: t.source },
@@ -124,8 +132,7 @@ export async function pdf(
       if (doc.y > 730) doc.addPage();
       doc.moveDown(0.5);
     }
-    const bold =
-      block.header || block.kind === 'title' || block.kind === 'heading';
+    const bold = block.kind === 'title' || block.kind === 'heading';
     doc
       .font(bold ? join(dirname(font), 'FreeMonoBold.ttf') : font)
       .fontSize(

@@ -18,9 +18,10 @@ export const detailsSchema = z.object({
     .optional(),
 });
 export type Details = z.infer<typeof detailsSchema>;
-export const noteSchema = z
+const codeNoteSchema = z
   .object({
     id: z.string().uuid(),
+    general: z.literal(false).optional(),
     file: text.refine(
       (p) =>
         !p.startsWith('/') && !p.includes('\\') && !p.split('/').includes('..'),
@@ -35,6 +36,16 @@ export const noteSchema = z
     code: z.string().max(1000000),
   })
   .refine((n) => n.end >= n.start);
+const generalNoteSchema = z.object({
+  ...codeNoteSchema.shape,
+  general: z.literal(true),
+  file: z.union([codeNoteSchema.shape.file, z.literal('')]),
+  module: z.string().trim().max(1000).optional(),
+  start: z.literal(0),
+  end: z.literal(0),
+  code: z.literal(''),
+});
+export const noteSchema = z.union([codeNoteSchema, generalNoteSchema]);
 export type Note = z.infer<typeof noteSchema>;
 const exportSchema = z.object({
   number: z.number().int().positive(),

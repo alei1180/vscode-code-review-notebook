@@ -24,6 +24,9 @@ async function main() {
   const root = uri(pathToFileURL(directory).href);
   let picks = 0;
   let cancel = false;
+  let attachFile = false;
+  let receive;
+  let messages = [];
   const vscode = {
     EventEmitter: class {
       event = disposable;
@@ -46,16 +49,44 @@ async function main() {
     },
     UIKind: { Desktop: 1 },
     env: { uiKind: 1 },
-    Uri: { parse: uri, file: (file) => uri(pathToFileURL(file).href) },
+    Uri: {
+      parse: uri,
+      file: (file) => uri(pathToFileURL(file).href),
+      joinPath: (root, ...parts) =>
+        uri(pathToFileURL(path.join(root.fsPath, ...parts)).href),
+    },
+    ViewColumn: { Active: 1 },
     ProgressLocation: { Notification: 15 },
     window: {
       createTreeView: disposable,
+      createWebviewPanel: () => ({
+        ...disposable(),
+        onDidDispose: disposable,
+        webview: {
+          cspSource: 'test',
+          asWebviewUri: (value) => value,
+          postMessage: async (message) => {
+            messages.push(message);
+          },
+          onDidReceiveMessage: (callback) => {
+            receive = callback;
+            return disposable();
+          },
+        },
+      }),
+      showOpenDialog: async () => [
+        uri(pathToFileURL(path.join(directory, 'example.md')).href),
+      ],
       onDidChangeWindowState: disposable,
       createOutputChannel: () => ({ ...disposable(), appendLine() {} }),
       showErrorMessage: (message) => errors.push(message),
       showQuickPick: async (options) => {
         picks++;
-        return cancel ? undefined : options[0];
+        return cancel
+          ? undefined
+          : attachFile && options.some((o) => o.attached)
+            ? options.find((o) => o.attached)
+            : options[0];
       },
       withProgress: async (_options, work) => work(),
       showTextDocument: async (file) =>
@@ -76,6 +107,7 @@ async function main() {
     );
     module.exports.activate({
       extensionPath,
+      extensionUri: uri(pathToFileURL(extensionPath).href),
       globalStorageUri: root,
       subscriptions,
     });
@@ -136,6 +168,52 @@ async function main() {
         }
       }
     }
+    cancel = false;
+    await fs.writeFile(path.join(directory, 'example.md'), '# Example');
+    for (const attached of [false, true]) {
+      attachFile = attached;
+      messages = [];
+      const review = createReview(root.toString(), {
+        taskTitle: 'General',
+        taskNumber: 'G1',
+        assignee: 'A',
+        reviewer: 'R',
+      });
+      await fs.writeFile(
+        databaseFile,
+        JSON.stringify({ version: 1, reviews: [review], active: review.id }),
+      );
+      await handlers.get('codeReviewNotes.addGeneral')();
+      assert.deepEqual(errors, []);
+      await receive({ type: 'ready' });
+      const fields = messages.find((m) => m.type === 'init').fields;
+      assert.equal(
+        fields.some((f) => f.name === 'range'),
+        false,
+      );
+      await receive({
+        type: 'save',
+        values: {
+          module: '',
+          comment: 'General observation',
+          source: '',
+          severity: 'minor',
+        },
+      });
+      assert.equal(
+        messages.some((m) => m.type === 'error'),
+        false,
+      );
+      const stored = JSON.parse(await fs.readFile(databaseFile, 'utf8'))
+        .reviews[0].notes[0];
+      assert.equal(stored.general, true);
+      assert.equal(stored.file, attached ? 'example.md' : '');
+      assert.equal(stored.start, 0);
+      assert.equal(stored.code, '');
+    }
+    console.log(
+      'Bundled general note creation with and without a file passed.',
+    );
     console.log(
       'Bundled completion/export: editor URI, palette, tree and cancellation passed.',
     );
