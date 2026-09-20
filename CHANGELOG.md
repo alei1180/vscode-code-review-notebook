@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+- Fix completion and export from the editor context menu: file URIs now open the review picker instead of being treated as review items.
+- Add bundled command regression coverage for editor, palette, tree and cancellation paths, including Markdown and PDF output.
+
 ## 0.1.1
 
 - Group context actions under Code Review Note.
