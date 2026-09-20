@@ -28,7 +28,7 @@ exportReport(
   review,
   path.resolve('work/qa'),
   'both',
-  path.resolve('media/fonts/FreeMonoBold.ttf'),
+  path.resolve('media/fonts/FreeMono.ttf'),
 )
   .then((files) => console.log(files))
   .catch((error) => {

@@ -10,6 +10,7 @@ export type Block = {
   kind: 'title' | 'heading' | 'text' | 'code' | 'link';
   text: string;
   language?: string;
+  header?: boolean;
 };
 export function reportBlocks(review: Review): Block[] {
   if (review.state.status === 'draft') throw new Error('Unreserved report');
@@ -27,10 +28,11 @@ export function reportBlocks(review: Review): Block[] {
     [t.total, String(review.notes.length)],
   ];
   for (const [label, value] of metadata)
-    blocks.push({ kind: 'text', text: `${label}: ${value}` });
+    blocks.push({ kind: 'text', text: `${label}: ${value}`, header: true });
   for (const severity of severities)
     blocks.push({
       kind: 'text',
+      header: true,
       text: `${t[severity]}: ${review.notes.filter((n) => n.severity === severity).length}`,
     });
   if (!review.notes.length) blocks.push({ kind: 'text', text: t.noNotes });
@@ -114,12 +116,7 @@ export async function pdf(
   });
   for (const block of blocks) {
     if (block.kind === 'code') {
-      await drawCode(
-        doc,
-        block.text,
-        block.language ?? '',
-        join(dirname(font), 'FreeMonoBold.ttf'),
-      );
+      await drawCode(doc, block.text, block.language ?? '', font);
       doc.font(font);
       continue;
     }
@@ -127,16 +124,19 @@ export async function pdf(
       if (doc.y > 730) doc.addPage();
       doc.moveDown(0.5);
     }
+    const bold =
+      block.header || block.kind === 'title' || block.kind === 'heading';
     doc
+      .font(bold ? join(dirname(font), 'FreeMonoBold.ttf') : font)
       .fontSize(
         block.kind === 'title' ? 22 : block.kind === 'heading' ? 13 : 10,
       )
       .fillColor(block.kind === 'link' ? '#165db5' : '#202632')
       .text(block.text, {
-        lineGap: 3,
+        lineGap: block.header ? 0 : 3,
         ...(block.kind === 'link' ? { link: block.text, underline: true } : {}),
       });
-    doc.moveDown(0.6);
+    doc.moveDown(block.header ? 0.15 : 0.6);
   }
   doc.end();
   return result;

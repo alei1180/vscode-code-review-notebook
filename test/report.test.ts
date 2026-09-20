@@ -47,7 +47,7 @@ test('both formats export offline and retries are idempotent', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'report-test-'));
   try {
     const r = review(),
-      font = join(process.cwd(), 'media/fonts/FreeMonoBold.ttf');
+      font = join(process.cwd(), 'media/fonts/FreeMono.ttf');
     const files = await exportReport(r, dir, 'both', font);
     assert.equal(files.length, 2);
     const pdf = await readFile(files[1]!);
@@ -70,7 +70,7 @@ test('partial export can be retried without replacing an unrelated file', async 
     if (r.state.status === 'draft') throw new Error('Expected reservation');
     const destination = join(dir, r.state.report.baseName + '.pdf');
     await writeReport(destination, Buffer.from('unrelated'));
-    const font = join(process.cwd(), 'media/fonts/FreeMonoBold.ttf');
+    const font = join(process.cwd(), 'media/fonts/FreeMono.ttf');
     await assert.rejects(exportReport(r, dir, 'both', font), ConflictError);
     assert.ok(
       (await readFile(join(dir, r.state.report.baseName + '.md'))).length > 0,

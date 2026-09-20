@@ -36,7 +36,7 @@ async function main() {
       review,
       directory,
       'both',
-      path.resolve('media/fonts/FreeMonoBold.ttf'),
+      path.resolve('media/fonts/FreeMono.ttf'),
     );
     assert.equal(files.length, 2);
     assert.equal(

@@ -28,7 +28,7 @@ Right-click notes to view their saved contents, edit or delete them. Click a not
 
 The **Module** field is editable and initially contains the source path. Renaming it changes the sidebar and report label while preserving the original file for navigation. Line ranges are read-only and always come from the editor selection. Editing a comment does not recapture or move its saved code.
 
-PDF reports use an embedded FreeMono Bold typewriter font with Cyrillic support; code keeps offline syntax highlighting. The language is captured from VS Code; older notes use the original file extension. Unknown languages and snippets over 100,000 characters are rendered as plain code. Existing exported files are not overwritten: after an update changes report formatting, choose a different output folder to regenerate an old report.
+PDF reports use embedded FreeMono with Cyrillic support. Only the compact report header, severity headings and module headings are bold; code keeps offline syntax highlighting. The language is captured from VS Code; older notes use the original file extension. Unknown languages and snippets over 100,000 characters are rendered as plain code. Existing exported files are not overwritten: after an update changes report formatting, choose a different output folder to regenerate an old report.
 
 ## Settings
 
