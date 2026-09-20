@@ -124,7 +124,12 @@ export async function pdf(
   });
   for (const block of blocks) {
     if (block.kind === 'code') {
-      await drawCode(doc, block.text, block.language ?? '', font);
+      await drawCode(
+        doc,
+        block.text,
+        block.language ?? '',
+        join(dirname(font), 'FreeMono.ttf'),
+      );
       doc.font(font);
       continue;
     }
@@ -134,7 +139,7 @@ export async function pdf(
     }
     const bold = block.kind === 'title' || block.kind === 'heading';
     doc
-      .font(bold ? join(dirname(font), 'FreeMonoBold.ttf') : font)
+      .font(bold ? join(dirname(font), 'NotoSans-Bold.ttf') : font)
       .fontSize(
         block.kind === 'title' ? 22 : block.kind === 'heading' ? 13 : 10,
       )

@@ -541,7 +541,7 @@ class Controller implements vscode.Disposable {
                 this.context.extensionPath,
                 'media',
                 'fonts',
-                'FreeMono.ttf',
+                'NotoSans-Regular.ttf',
               ),
             );
             r.state = { status: 'completed', report: r.state.report };

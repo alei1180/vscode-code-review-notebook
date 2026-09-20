@@ -81,7 +81,7 @@ test('general notes persist, edit and export with or without a file and never ac
       restored,
       directory,
       'both',
-      join(process.cwd(), 'media/fonts/FreeMono.ttf'),
+      join(process.cwd(), 'media/fonts/NotoSans-Regular.ttf'),
     );
   } finally {
     await rm(directory, { recursive: true, force: true });

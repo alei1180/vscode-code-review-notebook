@@ -28,7 +28,7 @@ Right-click notes to view their saved contents, edit or delete them. Click a not
 
 The **Module** field is editable and initially contains the source path. Renaming it changes the sidebar and report label while preserving the original file for navigation. Line ranges are read-only and always come from the editor selection. Editing a comment does not recapture or move its saved code.
 
-PDF reports use embedded FreeMono with Cyrillic support. Only the report title, severity headings and item headings are bold; code keeps offline syntax highlighting. The language is captured from VS Code; older notes use the original file extension. Unknown languages and snippets over 100,000 characters are rendered as plain code. Existing exported files are not overwritten: after an update changes report formatting, choose a different output folder to regenerate an old report.
+PDF reports use embedded Noto Sans with Cyrillic support; code snapshots retain the FreeMono monospace font. Only the report title, severity headings and item headings are bold; code keeps offline syntax highlighting. The language is captured from VS Code; older notes use the original file extension. Unknown languages and snippets over 100,000 characters are rendered as plain code. Existing exported files are not overwritten: after an update changes report formatting, choose a different output folder to regenerate an old report.
 
 Use **Code Review Notes: Add General Note** for observations without code lines. Choose **Without a file** or **Attach to a file…** within the review project. The optional name appears in the report; general notes have no line range or code snapshot. The command is available in the Command Palette, review panel toolbar and Code Review Note context menus.
 
