@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.5
+
+- Add general notes without code lines, optionally attached to a project file.
+- Use regular text in the compact report header, keeping the report title bold.
+- Show localized severity descriptions beside header counts, without bilingual level labels.
+- Remove module prefixes and ranges from item headings; put line numbers before code snapshots.
+
 ## 0.1.4
 
 - Keep FreeMono bold only for report headers, severity headings and module headings; use regular text for comments, code and links.
