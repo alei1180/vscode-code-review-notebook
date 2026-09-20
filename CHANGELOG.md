@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+- Add an editable Review Number field (default 1) with English/Russian labels, positive integer validation and task-specific duplicate protection.
+- Preserve the chosen number in reports and filenames, with automatic numbering retained for legacy drafts.
+- Use an embedded FreeMono Bold typewriter font throughout PDF reports, preserving Cyrillic text and syntax highlighting.
+
 ## 0.1.2
 
 - Fix completion and export from the editor context menu: file URIs now open the review picker instead of being treated as review items.
