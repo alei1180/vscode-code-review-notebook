@@ -26,8 +26,6 @@ export function noteFields(note: Note): Field[] {
     },
   ];
   return note.general
-    ? fields.filter(
-        (field) => field.name !== 'range' && field.name !== 'severity',
-      )
+    ? fields.filter((field) => field.name !== 'range')
     : fields;
 }

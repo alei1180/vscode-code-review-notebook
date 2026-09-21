@@ -23,7 +23,7 @@ export class ReviewTree
       { review, note } = item;
     if (note) {
       const tree = new vscode.TreeItem(
-        `${note.general ? t.general : t[note.severity]} · ${note.comment.split('\n')[0] ?? ''}`,
+        `${t[note.severity]} · ${note.comment.split('\n')[0] ?? ''}`,
         vscode.TreeItemCollapsibleState.None,
       );
       tree.description = note.general

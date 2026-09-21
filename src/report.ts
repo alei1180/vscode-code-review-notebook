@@ -59,14 +59,13 @@ export function reportBlocks(review: Review): Block[] {
     blocks.push({
       kind: 'text',
       header: true,
-      text: `${t[severity]}: ${review.notes.filter((n) => !n.general && n.severity === severity).length} (${t[`${severity}Help`]})`,
+      text: `${t[severity]}: ${review.notes.filter((n) => n.severity === severity).length} (${t[`${severity}Help`]})`,
     });
   if (!review.notes.length) blocks.push({ kind: 'text', text: t.noNotes });
   const ordered = [
     ...severities.flatMap((severity) =>
-      review.notes.filter((n) => !n.general && n.severity === severity),
+      review.notes.filter((n) => n.severity === severity),
     ),
-    ...review.notes.filter((n) => n.general),
   ];
   let index = 0;
   for (const note of ordered) {
@@ -78,18 +77,16 @@ export function reportBlocks(review: Review): Block[] {
       { kind: 'text', text: note.comment },
     );
     if (!note.general)
-      blocks.push(
-        {
-          kind: 'text',
-          compact: true,
-          text: `${t.range}: ${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
-        },
-        {
-          kind: 'text',
-          compact: true,
-          text: `${t.severity}: ${t[note.severity]} (${t[`${note.severity}Help`]})`,
-        },
-      );
+      blocks.push({
+        kind: 'text',
+        compact: true,
+        text: `${t.range}: ${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
+      });
+    blocks.push({
+      kind: 'text',
+      compact: true,
+      text: `${t.severity}: ${t[note.severity]} (${t[`${note.severity}Help`]})`,
+    });
     if (note.source)
       blocks.push({
         kind: 'link',

@@ -51,10 +51,10 @@ test('general notes persist, edit and export with or without a file and never ac
       });
       assert.ok(edited.success);
       assert.equal(edited.data.start, 0);
-      assert.equal(edited.data.severity, undefined);
+      assert.equal(edited.data.severity, 'minor');
       assert.equal(
         noteFields(note).some((f) => f.name === 'severity'),
-        false,
+        true,
       );
       assert.equal(edited.data.file, file);
       assert.equal(
@@ -76,9 +76,9 @@ test('general notes persist, edit and export with or without a file and never ac
     const blocks = reportBlocks(restored);
     assert.equal(
       blocks.some((b) => b.text.startsWith('Уровень:')),
-      false,
+      true,
     );
-    assert.ok(blocks.some((b) => b.text.startsWith('Минорное: 0 (')));
+    assert.ok(blocks.some((b) => b.text.startsWith('Минорное: 2 (')));
     assert.equal(
       blocks.some(
         (b) => b.kind === 'code' || b.text.startsWith('Номера строк:'),
@@ -145,4 +145,13 @@ test('report localizes severity descriptions and places ranges directly before c
         false,
       );
   }
+});
+
+test('general notes from 0.1.9 receive a default severity without losing existing levels', () => {
+  const old = general();
+  assert.equal(
+    noteSchema.parse({ ...old, severity: undefined }).severity,
+    'minor',
+  );
+  assert.equal(noteSchema.parse(old).severity, 'major');
 });

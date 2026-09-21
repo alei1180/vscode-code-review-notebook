@@ -374,6 +374,7 @@ class Controller implements vscode.Disposable {
       {
         id: randomUUID(),
         general: true,
+        severity: 'minor',
         file,
         start: 0,
         end: 0,
