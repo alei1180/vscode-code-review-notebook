@@ -212,7 +212,7 @@
         },
         "codeReviewNotes.reportDirectory": {
           "type": "string",
-          "default": "code-review-notes",
+          "default": "Code Review Note",
           "description": "%setting.directory%"
         }
       }

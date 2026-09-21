@@ -40,7 +40,7 @@ The compact header includes each severity count and its description in the repor
 | --------------------------------- | ------------------- | ----------------------------------------------------------- |
 | `codeReviewNotes.language`        | `en`                | Form, sidebar and message language: `en` or `ru`            |
 | `codeReviewNotes.reportFormat`    | `markdown`          | `markdown`, `pdf` or `both`                                 |
-| `codeReviewNotes.reportDirectory` | `code-review-notes` | Absolute directory or path relative to the reviewed project |
+| `codeReviewNotes.reportDirectory` | `Code Review Note` | Report root, absolute or relative to your home folder; a task subfolder is added |
 
 Changing the language preserves values in open forms. Static Command Palette entries, context menus and Settings descriptions follow the VS Code display language. Report labels use the extension language at completion; later exports keep that language.
 
@@ -82,3 +82,5 @@ See [validation record](docs/VALIDATION.md), [architecture](docs/ARCHITECTURE.md
 ## License
 
 MIT — Copyright 2026 Alexander Osadchy.
+
+Reports default to `~/Code Review Note/<task number>/`. If the optional task number is empty, the task title is used instead (sanitized for filenames). Task URL is optional and only appears in reports when filled. Dates use local time in `YYYY/MM/DD HH:mm` format. Each note shows its severity below the line numbers, followed by `Code snapshot:`.

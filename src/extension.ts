@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
+import { homedir } from 'node:os';
 import { randomUUID } from 'node:crypto';
-import { join, relative, isAbsolute, resolve } from 'node:path';
+import { join, relative, isAbsolute } from 'node:path';
 import { z } from 'zod';
 import {
   createReview,
+  taskKey,
   detailsSchema,
   reviewSchema,
   noteSchema,
@@ -21,7 +23,7 @@ import { strings, type Key } from './i18n';
 import { form, FieldError, type Field } from './forms';
 import { noteFields } from './note-fields';
 import { ReviewTree, type Item } from './tree';
-import { exportReport, ConflictError } from './report';
+import { exportReport, reportDirectory, ConflictError } from './report';
 
 class UserError extends Error {
   constructor(readonly key: Key) {
@@ -229,7 +231,7 @@ class Controller implements vscode.Disposable {
   private reviewForm(project: string, existing?: Review, copy?: Review): void {
     if (existing) this.mutable(existing);
     const fields: Field[] = (
-      ['taskTitle', 'taskNumber', 'assignee', 'reviewer'] as const
+      ['taskTitle', 'taskNumber', 'taskUrl', 'assignee', 'reviewer'] as const
     ).map((name) => ({
       name,
       label: name,
@@ -249,8 +251,13 @@ class Controller implements vscode.Disposable {
       language,
       async (values) => {
         for (const field of fields)
-          if (!values[field.name]?.trim())
+          if (
+            !['taskNumber', 'taskUrl'].includes(field.name) &&
+            !values[field.name]?.trim()
+          )
             throw new FieldError(field.name, 'required');
+        if (!validUrl(values.taskUrl?.trim() ?? ''))
+          throw new FieldError('taskUrl', 'urlError');
         if (!/^[1-9]\d*$/.test(values.reviewNumber ?? ''))
           throw new FieldError('reviewNumber', 'invalid');
         const parsed = detailsSchema.safeParse({
@@ -268,7 +275,7 @@ class Controller implements vscode.Disposable {
               (r) =>
                 r.id !== existing?.id &&
                 r.project === project &&
-                r.details.taskNumber === parsed.data.taskNumber &&
+                taskKey(r.details) === taskKey(parsed.data) &&
                 (r.state.status === 'draft'
                   ? r.details.reviewNumber
                   : r.state.report.number) === parsed.data.reviewNumber,
@@ -522,9 +529,10 @@ class Controller implements vscode.Disposable {
           language(),
         );
       });
-      const directory = resolve(
-        root.fsPath,
-        config.get<string>('reportDirectory') || 'code-review-notes',
+      const directory = reportDirectory(
+        review,
+        homedir(),
+        config.get<string>('reportDirectory'),
       );
       const files = await vscode.window.withProgress(
         { location: vscode.ProgressLocation.Notification, title: t('export') },

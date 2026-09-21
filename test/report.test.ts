@@ -89,3 +89,50 @@ test('native Brotli adapter returns font bytes losslessly', async () => {
   const original = Buffer.from('Font bytes and кириллица');
   assert.deepEqual(decompress(brotliCompressSync(original)), original);
 });
+
+test('task links are optional and dates and report folders follow user settings', async () => {
+  const { reportDate, reportDirectory } = await import('../src/report.js');
+  const { detailsSchema, taskKey } = await import('../src/model.js');
+  const localDate = new Date(2026, 8, 20, 18, 36, 59);
+  assert.equal(reportDate(localDate.toISOString()), '2026/09/20 18:36');
+  const r = review();
+  assert.equal(
+    reportDirectory(r, '/profile'),
+    join('/profile', 'Code Review Note', 'PAY-12'),
+  );
+  assert.equal(
+    reportDirectory(r, '/profile', 'reports'),
+    join('/profile', 'reports', 'PAY-12'),
+  );
+  assert.equal(
+    reportBlocks(r).some((b) => b.text === 'Ссылка на задачу:'),
+    false,
+  );
+  r.details.taskUrl = 'https://example.org/task/12';
+  assert.ok(
+    reportBlocks(r).some(
+      (b) => b.kind === 'link' && b.text === r.details.taskUrl,
+    ),
+  );
+  assert.equal(
+    detailsSchema.safeParse({ ...r.details, taskUrl: 'javascript:alert(1)' })
+      .success,
+    false,
+  );
+  r.details.taskNumber = '';
+  r.details.taskTitle = 'Без номера';
+  assert.equal(
+    reportDirectory(r, '/profile'),
+    join('/profile', 'Code Review Note', 'Без-номера'),
+  );
+  assert.notEqual(
+    taskKey(r.details),
+    taskKey({ ...r.details, taskTitle: 'Другая задача' }),
+  );
+  assert.ok(detailsSchema.safeParse(r.details).success);
+  r.details.taskTitle = '../../outside';
+  assert.equal(
+    reportDirectory(r, '/profile'),
+    join('/profile', 'Code Review Note', 'outside'),
+  );
+});

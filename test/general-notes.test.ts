@@ -111,10 +111,14 @@ test('report localizes severity descriptions and places ranges directly before c
         (b) => b.header && b.text === `${t.major}: 1 — ${t.majorHelp}`,
       ),
     );
-    assert.ok(blocks.some((b) => b.kind === 'heading' && b.text === t.major));
+    assert.ok(
+      blocks.some(
+        (b) => b.kind === 'heading' && b.text === `${t.severity}: ${t.major}`,
+      ),
+    );
     assert.ok(blocks.some((b) => b.text === '1. Payments'));
-    const index = blocks.findIndex((b) => b.text === t.code);
-    assert.equal(blocks[index - 1]?.text, `${t.range}: 2–16`);
+    const index = blocks.findIndex((b) => b.text === t.code + ':');
+    assert.equal(blocks[index - 2]?.text, `${t.range}: 2–16`);
     assert.equal(blocks[index + 1]?.kind, 'code');
     if (language === 'ru')
       assert.equal(

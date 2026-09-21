@@ -100,7 +100,12 @@ async function main() {
       filename: bundle,
     })(
       module.exports,
-      (name) => (name === 'vscode' ? vscode : localRequire(name)),
+      (name) =>
+        name === 'vscode'
+          ? vscode
+          : name === 'node:os'
+            ? { ...localRequire(name), homedir: () => directory }
+            : localRequire(name),
       module,
       bundle,
       path.dirname(bundle),
@@ -157,7 +162,8 @@ async function main() {
           for (const extension of ['md', 'pdf']) {
             const file = path.join(
               directory,
-              'code-review-notes',
+              'Code Review Note',
+              review.details.taskNumber,
               stored.state.report.baseName + '.' + extension,
             );
             const data = await fs.readFile(file);
@@ -214,6 +220,34 @@ async function main() {
     console.log(
       'Bundled general note creation with and without a file passed.',
     );
+    messages = [];
+    await handlers.get('codeReviewNotes.start')();
+    await receive({ type: 'ready' });
+    assert.ok(
+      messages
+        .find((m) => m.type === 'init')
+        .fields.some((f) => f.name === 'taskUrl'),
+    );
+    await receive({
+      type: 'save',
+      values: {
+        taskTitle: 'Unnamed task',
+        taskNumber: '',
+        taskUrl: 'https://example.org/task',
+        assignee: 'A',
+        reviewer: 'R',
+        reviewNumber: '1',
+      },
+    });
+    assert.equal(
+      messages.some((m) => m.type === 'error'),
+      false,
+    );
+    const newReview = JSON.parse(
+      await fs.readFile(databaseFile, 'utf8'),
+    ).reviews.at(-1);
+    assert.equal(newReview.details.taskNumber, '');
+    assert.equal(newReview.details.taskUrl, 'https://example.org/task');
     console.log(
       'Bundled completion/export: editor URI, palette, tree and cancellation passed.',
     );

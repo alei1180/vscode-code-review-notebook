@@ -7,7 +7,8 @@ export const severities = ['blocker', 'major', 'minor', 'nitpick'] as const;
 const text = z.string().trim().min(1).max(1000);
 export const detailsSchema = z.object({
   taskTitle: text,
-  taskNumber: text,
+  taskNumber: z.string().trim().max(1000).default(''),
+  taskUrl: z.string().trim().max(4000).refine(validUrl).optional(),
   assignee: text,
   reviewer: text,
   reviewNumber: z
@@ -117,6 +118,11 @@ export function safeName(value: string): string {
 }
 export class ReviewNumberConflictError extends Error {}
 
+export function taskKey(details: Details): string {
+  return details.taskNumber
+    ? `number:${details.taskNumber}`
+    : `title:${details.taskTitle}`;
+}
 export function reserveReport(
   review: Review,
   all: Review[],
@@ -127,7 +133,7 @@ export function reserveReport(
     .filter(
       (r) =>
         r.project === review.project &&
-        r.details.taskNumber === review.details.taskNumber,
+        taskKey(r.details) === taskKey(review.details),
     )
     .map((r) => (r.state.status === 'draft' ? 0 : r.state.report.number));
   const number = review.details.reviewNumber ?? Math.max(0, ...numbers) + 1;
@@ -136,7 +142,7 @@ export function reserveReport(
       (other) =>
         other.id !== review.id &&
         other.project === review.project &&
-        other.details.taskNumber === review.details.taskNumber &&
+        taskKey(other.details) === taskKey(review.details) &&
         (other.state.status === 'draft'
           ? other.details.reviewNumber
           : other.state.report.number) === number,
@@ -149,7 +155,7 @@ export function reserveReport(
       number,
       date: new Date().toISOString(),
       language,
-      baseName: `${safeName(review.details.taskNumber)}_${safeName(review.details.taskTitle)}_review-${String(number).padStart(2, '0')}`,
+      baseName: `${review.details.taskNumber ? safeName(review.details.taskNumber) + '_' : ''}${safeName(review.details.taskTitle)}_review-${String(number).padStart(2, '0')}`,
     },
   };
 }

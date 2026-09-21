@@ -1,10 +1,10 @@
 import PDFDocument from 'pdfkit';
 import { readFile, mkdir, writeFile, link, unlink } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import { join, dirname, extname } from 'node:path';
+import { join, dirname, extname, resolve } from 'node:path';
 import { drawCode } from './pdf-code';
 import { strings } from './i18n';
-import { severities, type Review } from './model';
+import { severities, safeName, type Review } from './model';
 import { isCode } from './storage';
 export type Block = {
   kind: 'title' | 'heading' | 'text' | 'code' | 'link';
@@ -12,6 +12,21 @@ export type Block = {
   language?: string;
   header?: boolean;
 };
+export function reportDirectory(
+  review: Review,
+  home: string,
+  configured?: string,
+): string {
+  return join(
+    resolve(home, configured || 'Code Review Note'),
+    safeName(review.details.taskNumber || review.details.taskTitle),
+  );
+}
+export function reportDate(value: string): string {
+  const date = new Date(value);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
 export function reportBlocks(review: Review): Block[] {
   if (review.state.status === 'draft') throw new Error('Unreserved report');
   const report = review.state.report,
@@ -23,12 +38,18 @@ export function reportBlocks(review: Review): Block[] {
     [t.assignee, review.details.assignee],
     [t.reviewer, review.details.reviewer],
     [t.number, String(report.number)],
-    [t.started, review.started],
-    [t.finished, report.date],
+    [t.started, reportDate(review.started)],
+    [t.finished, reportDate(report.date)],
     [t.total, String(review.notes.length)],
   ];
   for (const [label, value] of metadata)
-    blocks.push({ kind: 'text', text: `${label}: ${value}`, header: true });
+    if (value)
+      blocks.push({ kind: 'text', text: `${label}: ${value}`, header: true });
+  if (review.details.taskUrl)
+    blocks.push(
+      { kind: 'text', text: t.taskUrl + ':', header: true },
+      { kind: 'link', text: review.details.taskUrl, header: true },
+    );
   for (const severity of severities)
     blocks.push({
       kind: 'text',
@@ -39,7 +60,6 @@ export function reportBlocks(review: Review): Block[] {
   let index = 0;
   for (const severity of severities) {
     const notes = review.notes.filter((n) => n.severity === severity);
-    if (notes.length) blocks.push({ kind: 'heading', text: t[severity] });
     for (const note of notes) {
       blocks.push(
         {
@@ -54,7 +74,8 @@ export function reportBlocks(review: Review): Block[] {
             kind: 'text',
             text: `${t.range}: ${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
           },
-          { kind: 'text', text: t.code },
+          { kind: 'heading', text: `${t.severity}: ${t[severity]}` },
+          { kind: 'text', text: t.code + ':' },
           {
             kind: 'code',
             text: note.code,
@@ -62,6 +83,8 @@ export function reportBlocks(review: Review): Block[] {
               note.language ?? extname(note.file).slice(1).toLowerCase(),
           },
         );
+      if (note.general)
+        blocks.push({ kind: 'heading', text: `${t.severity}: ${t[severity]}` });
       if (note.source)
         blocks.push(
           { kind: 'text', text: t.source },
