@@ -11,6 +11,8 @@ export type Block = {
   text: string;
   language?: string;
   header?: boolean;
+  compact?: boolean;
+  prefix?: string;
 };
 export function reportDirectory(
   review: Review,
@@ -46,10 +48,12 @@ export function reportBlocks(review: Review): Block[] {
     if (value)
       blocks.push({ kind: 'text', text: `${label}: ${value}`, header: true });
   if (review.details.taskUrl)
-    blocks.push(
-      { kind: 'text', text: t.taskUrl + ':', header: true },
-      { kind: 'link', text: review.details.taskUrl, header: true },
-    );
+    blocks.push({
+      kind: 'link',
+      prefix: t.taskUrl + ': ',
+      text: review.details.taskUrl,
+      header: true,
+    });
   for (const severity of severities)
     blocks.push({
       kind: 'text',
@@ -72,10 +76,15 @@ export function reportBlocks(review: Review): Block[] {
         blocks.push(
           {
             kind: 'text',
+            compact: true,
             text: `${t.range}: ${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
           },
-          { kind: 'heading', text: `${t.severity}: ${t[severity]}` },
-          { kind: 'text', text: t.code + ':' },
+          {
+            kind: 'text',
+            compact: true,
+            text: `${t.severity}: ${t[severity]} — ${t[`${severity}Help`]}`,
+          },
+          { kind: 'text', compact: true, text: t.code + ':' },
           {
             kind: 'code',
             text: note.code,
@@ -84,7 +93,11 @@ export function reportBlocks(review: Review): Block[] {
           },
         );
       if (note.general)
-        blocks.push({ kind: 'heading', text: `${t.severity}: ${t[severity]}` });
+        blocks.push({
+          kind: 'text',
+          compact: true,
+          text: `${t.severity}: ${t[severity]} — ${t[`${severity}Help`]}`,
+        });
       if (note.source)
         blocks.push(
           { kind: 'text', text: t.source },
@@ -112,7 +125,7 @@ export function markdown(blocks: Block[]): string {
           return `${fence}\n${block.text}\n${fence}`;
         }
         if (block.kind === 'link')
-          return `[${escape(block.text)}](<${new URL(block.text).href.replace(/</g, '%3C').replace(/>/g, '%3E')}>)`;
+          return `${escape(block.prefix ?? '')}[${escape(block.text)}](<${new URL(block.text).href.replace(/</g, '%3C').replace(/>/g, '%3E')}>)`;
         return (
           (block.kind === 'title'
             ? '# '
@@ -121,7 +134,16 @@ export function markdown(blocks: Block[]): string {
               : '') + escape(block.text)
         );
       })
-      .join('\n\n') + '\n'
+      .map(
+        (text, index) =>
+          text +
+          (index === blocks.length - 1
+            ? ''
+            : blocks[index]?.compact && blocks[index + 1]?.kind !== 'code'
+              ? '  \n'
+              : '\n\n'),
+      )
+      .join('') + '\n'
   );
 }
 export async function pdf(
@@ -166,12 +188,15 @@ export async function pdf(
       .fontSize(
         block.kind === 'title' ? 22 : block.kind === 'heading' ? 13 : 10,
       )
+      .fillColor('#202632');
+    if (block.prefix) doc.text(block.prefix, { continued: true, lineGap: 0 });
+    doc
       .fillColor(block.kind === 'link' ? '#165db5' : '#202632')
       .text(block.text, {
-        lineGap: block.header ? 0 : 3,
+        lineGap: block.header || block.compact ? 0 : 3,
         ...(block.kind === 'link' ? { link: block.text, underline: true } : {}),
       });
-    doc.moveDown(block.header ? 0.15 : 0.6);
+    if (!block.compact) doc.moveDown(block.header ? 0.15 : 0.6);
   }
   doc.end();
   return result;

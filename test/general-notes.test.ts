@@ -113,7 +113,9 @@ test('report localizes severity descriptions and places ranges directly before c
     );
     assert.ok(
       blocks.some(
-        (b) => b.kind === 'heading' && b.text === `${t.severity}: ${t.major}`,
+        (b) =>
+          b.kind === 'text' &&
+          b.text === `${t.severity}: ${t.major} — ${t.majorHelp}`,
       ),
     );
     assert.ok(blocks.some((b) => b.text === '1. Payments'));
