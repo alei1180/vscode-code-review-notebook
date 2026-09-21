@@ -21,11 +21,13 @@ export function noteFields(note: Note): Field[] {
     {
       name: 'severity',
       label: 'severity',
-      value: note.severity,
+      value: note.severity ?? 'minor',
       options: severities.map((value) => ({ value, label: value })),
     },
   ];
   return note.general
-    ? fields.filter((field) => field.name !== 'range')
+    ? fields.filter(
+        (field) => field.name !== 'range' && field.name !== 'severity',
+      )
     : fields;
 }

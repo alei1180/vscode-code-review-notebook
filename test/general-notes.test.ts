@@ -51,6 +51,11 @@ test('general notes persist, edit and export with or without a file and never ac
       });
       assert.ok(edited.success);
       assert.equal(edited.data.start, 0);
+      assert.equal(edited.data.severity, undefined);
+      assert.equal(
+        noteFields(note).some((f) => f.name === 'severity'),
+        false,
+      );
       assert.equal(edited.data.file, file);
       assert.equal(
         noteSchema.safeParse({ ...note, start: 1, end: 2 }).success,
@@ -69,6 +74,11 @@ test('general notes persist, edit and export with or without a file and never ac
     const restored = (await store.read()).reviews[0]!;
     reserveReport(restored, [restored], 'ru');
     const blocks = reportBlocks(restored);
+    assert.equal(
+      blocks.some((b) => b.text.startsWith('Уровень:')),
+      false,
+    );
+    assert.ok(blocks.some((b) => b.text.startsWith('Минорное: 0 (')));
     assert.equal(
       blocks.some(
         (b) => b.kind === 'code' || b.text.startsWith('Номера строк:'),
@@ -89,7 +99,10 @@ test('general notes persist, edit and export with or without a file and never ac
 });
 test('report localizes severity descriptions and places ranges directly before code snapshots', () => {
   for (const language of ['ru', 'en'] as const) {
-    const review = createReview('project', details);
+    const review = createReview('project', {
+      ...details,
+      taskUrl: 'https://example.org/task',
+    });
     review.notes.push(
       noteSchema.parse({
         id: randomUUID(),
@@ -99,7 +112,7 @@ test('report localizes severity descriptions and places ranges directly before c
         end: 16,
         code: 'const n = 1;',
         comment: 'Check',
-        source: '',
+        source: 'https://example.org/source',
         severity: 'major',
       }),
     );
@@ -108,19 +121,23 @@ test('report localizes severity descriptions and places ranges directly before c
       blocks = reportBlocks(review);
     assert.ok(
       blocks.some(
-        (b) => b.header && b.text === `${t.major}: 1 — ${t.majorHelp}`,
+        (b) => b.header && b.text === `${t.major}: 1 (${t.majorHelp})`,
       ),
     );
     assert.ok(
       blocks.some(
         (b) =>
           b.kind === 'text' &&
-          b.text === `${t.severity}: ${t.major} — ${t.majorHelp}`,
+          b.text === `${t.severity}: ${t.major} (${t.majorHelp})`,
       ),
     );
     assert.ok(blocks.some((b) => b.text === '1. Payments'));
     const index = blocks.findIndex((b) => b.text === t.code + ':');
-    assert.equal(blocks[index - 2]?.text, `${t.range}: 2–16`);
+    assert.equal(blocks[index - 3]?.text, `${t.range}: 2–16`);
+    assert.equal(blocks[index - 1]?.prefix, t.source + ': ');
+    assert.equal(blocks[index - 1]?.text, 'https://example.org/source');
+    const task = blocks.findIndex((b) => b.text === `${t.taskTitle}: Task`);
+    assert.equal(blocks[task + 1]?.prefix, t.taskUrl + ': ');
     assert.equal(blocks[index + 1]?.kind, 'code');
     if (language === 'ru')
       assert.equal(

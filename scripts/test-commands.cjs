@@ -213,6 +213,7 @@ async function main() {
       const stored = JSON.parse(await fs.readFile(databaseFile, 'utf8'))
         .reviews[0].notes[0];
       assert.equal(stored.general, true);
+      assert.equal(stored.severity, undefined);
       assert.equal(stored.file, attached ? 'example.md' : '');
       assert.equal(stored.start, 0);
       assert.equal(stored.code, '');

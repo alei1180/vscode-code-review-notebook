@@ -44,66 +44,68 @@ export function reportBlocks(review: Review): Block[] {
     [t.finished, reportDate(report.date)],
     [t.total, String(review.notes.length)],
   ];
-  for (const [label, value] of metadata)
+  for (const [label, value] of metadata) {
     if (value)
       blocks.push({ kind: 'text', text: `${label}: ${value}`, header: true });
-  if (review.details.taskUrl)
-    blocks.push({
-      kind: 'link',
-      prefix: t.taskUrl + ': ',
-      text: review.details.taskUrl,
-      header: true,
-    });
+    if (label === t.taskTitle && review.details.taskUrl)
+      blocks.push({
+        kind: 'link',
+        prefix: t.taskUrl + ': ',
+        text: review.details.taskUrl,
+        header: true,
+      });
+  }
   for (const severity of severities)
     blocks.push({
       kind: 'text',
       header: true,
-      text: `${t[severity]}: ${review.notes.filter((n) => n.severity === severity).length} — ${t[`${severity}Help`]}`,
+      text: `${t[severity]}: ${review.notes.filter((n) => !n.general && n.severity === severity).length} (${t[`${severity}Help`]})`,
     });
   if (!review.notes.length) blocks.push({ kind: 'text', text: t.noNotes });
+  const ordered = [
+    ...severities.flatMap((severity) =>
+      review.notes.filter((n) => !n.general && n.severity === severity),
+    ),
+    ...review.notes.filter((n) => n.general),
+  ];
   let index = 0;
-  for (const severity of severities) {
-    const notes = review.notes.filter((n) => n.severity === severity);
-    for (const note of notes) {
+  for (const note of ordered) {
+    blocks.push(
+      {
+        kind: 'heading',
+        text: `${++index}. ${note.module || note.file || t.general}`,
+      },
+      { kind: 'text', text: note.comment },
+    );
+    if (!note.general)
       blocks.push(
         {
-          kind: 'heading',
-          text: `${++index}. ${note.module || note.file || t.general}`,
-        },
-        { kind: 'text', text: note.comment },
-      );
-      if (!note.general)
-        blocks.push(
-          {
-            kind: 'text',
-            compact: true,
-            text: `${t.range}: ${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
-          },
-          {
-            kind: 'text',
-            compact: true,
-            text: `${t.severity}: ${t[severity]} — ${t[`${severity}Help`]}`,
-          },
-          { kind: 'text', compact: true, text: t.code + ':' },
-          {
-            kind: 'code',
-            text: note.code,
-            language:
-              note.language ?? extname(note.file).slice(1).toLowerCase(),
-          },
-        );
-      if (note.general)
-        blocks.push({
           kind: 'text',
           compact: true,
-          text: `${t.severity}: ${t[severity]} — ${t[`${severity}Help`]}`,
-        });
-      if (note.source)
-        blocks.push(
-          { kind: 'text', text: t.source },
-          { kind: 'link', text: note.source },
-        );
-    }
+          text: `${t.range}: ${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
+        },
+        {
+          kind: 'text',
+          compact: true,
+          text: `${t.severity}: ${t[note.severity]} (${t[`${note.severity}Help`]})`,
+        },
+      );
+    if (note.source)
+      blocks.push({
+        kind: 'link',
+        compact: true,
+        prefix: t.source + ': ',
+        text: note.source,
+      });
+    if (!note.general)
+      blocks.push(
+        { kind: 'text', compact: true, text: t.code + ':' },
+        {
+          kind: 'code',
+          text: note.code,
+          language: note.language ?? extname(note.file).slice(1).toLowerCase(),
+        },
+      );
   }
   return blocks;
 }

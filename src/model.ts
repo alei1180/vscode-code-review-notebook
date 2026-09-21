@@ -39,6 +39,7 @@ const codeNoteSchema = z
   .refine((n) => n.end >= n.start);
 const generalNoteSchema = z.object({
   ...codeNoteSchema.shape,
+  severity: z.enum(severities).optional(),
   general: z.literal(true),
   file: z.union([codeNoteSchema.shape.file, z.literal('')]),
   module: z.string().trim().max(1000).optional(),
@@ -166,6 +167,6 @@ export function reviseNote(note: Note, values: Record<string, string>) {
     module: values.module,
     comment: values.comment,
     source: values.source ?? '',
-    severity: values.severity,
+    severity: note.general ? undefined : values.severity,
   });
 }

@@ -84,3 +84,5 @@ See [validation record](docs/VALIDATION.md), [architecture](docs/ARCHITECTURE.md
 MIT — Copyright 2026 Alexander Osadchy.
 
 Reports default to `~/Code Review Note/<task number>/`. If the optional task number is empty, the task title is used instead (sanitized for filenames). Task URL is optional and only appears in reports when filled. Dates use local time in `YYYY/MM/DD HH:mm` format. Each note shows its severity below the line numbers, followed by `Code snapshot:`.
+
+General notes have no severity selector and do not contribute to severity counts. Severity descriptions appear in parentheses. Source links follow the severity inline, before code snapshots; the task URL follows the task title.

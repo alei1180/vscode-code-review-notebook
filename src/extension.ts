@@ -379,7 +379,6 @@ class Controller implements vscode.Disposable {
         end: 0,
         comment: '',
         source: '',
-        severity: 'minor',
         code: '',
       },
       undefined,
