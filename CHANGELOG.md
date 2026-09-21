@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.9
+
+- Put severity descriptions in parentheses and source links directly after severity on the same line as their label.
+- Remove severity from general note forms, report entries and severity counts; preserve compatibility with existing notes.
+- Move the task URL directly after the task title in the report header.
+
 ## 0.1.8
 
 - Render severity as regular text with a localized description for every note.
