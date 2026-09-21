@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.10
+
+- Restore severity selection, report descriptions and severity counts for general notes.
+- Default general notes saved without severity in 0.1.9 to Minor while preserving existing severity values.
+
 ## 0.1.9
 
 - Put severity descriptions in parentheses and source links directly after severity on the same line as their label.
