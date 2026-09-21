@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.8
+
+- Render severity as regular text with a localized description for every note.
+- Remove empty lines between line numbers, severity and the code snapshot label.
+- Place task links on the same line as their label while preserving clickable URLs.
+
 ## 0.1.7
 
 - Save reports under the user home folder in Code Review Note/task-number, falling back to the task title when the optional task number is empty.
