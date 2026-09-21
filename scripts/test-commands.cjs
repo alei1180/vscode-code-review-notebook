@@ -27,6 +27,7 @@ async function main() {
   let attachFile = false;
   let receive;
   let messages = [];
+  let panelCount = 0;
   const vscode = {
     EventEmitter: class {
       event = disposable;
@@ -59,21 +60,28 @@ async function main() {
     ProgressLocation: { Notification: 15 },
     window: {
       createTreeView: disposable,
-      createWebviewPanel: () => ({
-        ...disposable(),
-        onDidDispose: disposable,
-        webview: {
-          cspSource: 'test',
-          asWebviewUri: (value) => value,
-          postMessage: async (message) => {
-            messages.push(message);
-          },
-          onDidReceiveMessage: (callback) => {
-            receive = callback;
+      createWebviewPanel: () => {
+        panelCount++;
+        let onDispose = () => {};
+        return {
+          dispose: () => onDispose(),
+          onDidDispose: (callback) => {
+            onDispose = callback;
             return disposable();
           },
-        },
-      }),
+          webview: {
+            cspSource: 'test',
+            asWebviewUri: (value) => value,
+            postMessage: async (message) => {
+              messages.push(message);
+            },
+            onDidReceiveMessage: (callback) => {
+              receive = callback;
+              return disposable();
+            },
+          },
+        };
+      },
       showOpenDialog: async () => [
         uri(pathToFileURL(path.join(directory, 'example.md')).href),
       ],
@@ -249,6 +257,108 @@ async function main() {
     ).reviews.at(-1);
     assert.equal(newReview.details.taskNumber, '');
     assert.equal(newReview.details.taskUrl, 'https://example.org/task');
+    const until = async (condition) => {
+      const deadline = Date.now() + 3000;
+      while (!condition()) {
+        assert.ok(Date.now() < deadline, 'Timed out waiting for form');
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+    };
+    for (const command of ['add', 'addGeneral']) {
+      for (const cancelStart of [false, true]) {
+        await fs.writeFile(
+          databaseFile,
+          JSON.stringify({ version: 1, reviews: [], active: null }),
+        );
+        const source = path.join(directory, 'example.md');
+        vscode.window.activeTextEditor = {
+          document: {
+            uri: vscode.Uri.file(source),
+            isUntitled: false,
+            isDirty: false,
+            languageId: 'markdown',
+            getText: () => 'first\nselected\nlast',
+          },
+          selection: {
+            start: { line: 1, character: 0 },
+            end: { line: 2, character: 0 },
+          },
+        };
+        attachFile = false;
+        const previousCount = panelCount;
+        const pendingCommand = handlers.get('codeReviewNotes.' + command)();
+        await until(() => panelCount === previousCount + 1);
+        const startReceive = receive;
+        messages = [];
+        await startReceive({ type: 'ready' });
+        assert.ok(
+          messages
+            .find((m) => m.type === 'init')
+            .fields.some((f) => f.name === 'taskTitle'),
+        );
+        // Changing the editor while entering task details must not change the captured note.
+        vscode.window.activeTextEditor = undefined;
+        if (cancelStart) {
+          await startReceive({ type: 'cancel' });
+          await pendingCommand;
+          assert.equal(panelCount, previousCount + 1);
+          assert.equal(
+            JSON.parse(await fs.readFile(databaseFile, 'utf8')).reviews.length,
+            0,
+          );
+          continue;
+        }
+        await startReceive({ type: 'save', values: { taskTitle: '' } });
+        assert.equal(
+          panelCount,
+          previousCount + 1,
+          'Validation errors must keep the start form open',
+        );
+        await startReceive({
+          type: 'save',
+          values: {
+            taskTitle: 'Flow test',
+            taskNumber: 'FLOW',
+            taskUrl: '',
+            assignee: 'A',
+            reviewer: 'R',
+            reviewNumber: '1',
+          },
+        });
+        await pendingCommand;
+        assert.equal(panelCount, previousCount + 2);
+        messages = [];
+        await receive({ type: 'ready' });
+        const fields = messages.find((m) => m.type === 'init').fields;
+        assert.equal(
+          fields.some((f) => f.name === 'range'),
+          command === 'add',
+        );
+        if (command === 'add')
+          assert.equal(fields.find((f) => f.name === 'range').value, '2');
+        await receive({
+          type: 'save',
+          values: {
+            module: command === 'add' ? 'example.md' : '',
+            comment: 'Follow-up note',
+            severity: 'major',
+            source: '',
+          },
+        });
+        const review = JSON.parse(await fs.readFile(databaseFile, 'utf8'))
+          .reviews[0];
+        assert.equal(review.notes.length, 1);
+        assert.equal(review.notes[0].code, command === 'add' ? 'selected' : '');
+        assert.equal(
+          Boolean(review.notes[0].general),
+          command === 'addGeneral',
+        );
+        assert.deepEqual(errors, []);
+      }
+    }
+    console.log(
+      'Start-to-note continuation, selection capture, validation and cancellation passed.',
+    );
     console.log(
       'Bundled completion/export: editor URI, palette, tree and cancellation passed.',
     );

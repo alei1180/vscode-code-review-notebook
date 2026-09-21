@@ -28,7 +28,11 @@ export function form(
   save: (values: Record<string, string>) => Promise<void>,
   onError: (error: unknown) => void,
   readonly = false,
-): void {
+): Promise<boolean> {
+  let finish!: (saved: boolean) => void;
+  const completion = new Promise<boolean>((resolve) => {
+    finish = resolve;
+  });
   const panel = vscode.window.createWebviewPanel(
     'reviewNotes.form',
     strings(language())[title],
@@ -85,6 +89,7 @@ export function form(
     saving = true;
     try {
       await save(message.data.values);
+      finish(true);
       panel.dispose();
     } catch (error) {
       if (error instanceof FieldError)
@@ -102,8 +107,10 @@ export function form(
     }
   });
   panel.onDidDispose(() => {
+    finish(false);
     configuration.dispose();
     listener.dispose();
   });
   context.subscriptions.push(panel);
+  return completion;
 }

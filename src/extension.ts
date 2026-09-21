@@ -85,7 +85,9 @@ class Controller implements vscode.Disposable {
           },
         ),
       );
-    command('start', () => this.start());
+    command('start', async () => {
+      await this.start();
+    });
     command('add', () => this.add());
     command('addGeneral', (item) => this.addGeneral(item));
     command('select', async (item) => {
@@ -96,11 +98,11 @@ class Controller implements vscode.Disposable {
     });
     command('editReview', async (item) => {
       const r = await this.pick(item, false);
-      if (r) this.reviewForm(r.project, r);
+      if (r) await this.reviewForm(r.project, r);
     });
     command('copy', async (item) => {
       const r = await this.pick(item, false);
-      if (r) this.reviewForm(r.project, undefined, r);
+      if (r) await this.reviewForm(r.project, undefined, r);
     });
     command('complete', (item) => this.complete(item));
     command('export', (item) => this.complete(item));
@@ -197,6 +199,7 @@ class Controller implements vscode.Disposable {
           Number(b.id === this.tree.active) - Number(a.id === this.tree.active),
       );
     if (!reviews.length) {
+      if (unfinished) return this.start(true);
       await this.start();
       return;
     }
@@ -210,7 +213,7 @@ class Controller implements vscode.Disposable {
     );
     return selected?.review;
   }
-  private async start(): Promise<void> {
+  private async start(waitForReview = false): Promise<Review | undefined> {
     this.supported();
     const folders =
       vscode.workspace.workspaceFolders?.filter(
@@ -226,9 +229,16 @@ class Controller implements vscode.Disposable {
               { title: t('project') },
             )
           )?.folder;
-    if (folder) this.reviewForm(folder.uri.toString());
+    if (!folder) return;
+    const pending = this.reviewForm(folder.uri.toString());
+    if (waitForReview) return pending;
+    void pending.catch((error) => this.error(error));
   }
-  private reviewForm(project: string, existing?: Review, copy?: Review): void {
+  private async reviewForm(
+    project: string,
+    existing?: Review,
+    copy?: Review,
+  ): Promise<Review | undefined> {
     if (existing) this.mutable(existing);
     const fields: Field[] = (
       ['taskTitle', 'taskNumber', 'taskUrl', 'assignee', 'reviewer'] as const
@@ -244,7 +254,8 @@ class Controller implements vscode.Disposable {
       numeric: true,
     });
     const snapshot = existing ? JSON.stringify(existing) : undefined;
-    form(
+    let savedReview: Review | undefined;
+    const saved = await form(
       this.context,
       existing ? 'edit' : 'start',
       fields,
@@ -287,15 +298,18 @@ class Controller implements vscode.Disposable {
             this.mutable(r);
             if (JSON.stringify(r) !== snapshot) throw new UserError('stale');
             r.details = parsed.data;
+            savedReview = r;
           } else {
             const r = createReview(project, parsed.data);
             db.reviews.push(r);
             db.active = r.id;
+            savedReview = r;
           }
         });
       },
       (error) => this.error(error),
     );
+    return saved ? savedReview : undefined;
   }
   private async add(): Promise<void> {
     this.supported();
