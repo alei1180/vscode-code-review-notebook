@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.7
+
+- Save reports under the user home folder in Code Review Note/task-number, falling back to the task title when the optional task number is empty.
+- Add an optional task URL to review forms and reports.
+- Format dates as local YYYY/MM/DD HH:mm.
+- Place each note severity below its line numbers and add the colon to Code snapshot:.
+
 ## 0.1.6
 
 - Use Noto Sans for report text and headings, matching the sans-serif interface style.

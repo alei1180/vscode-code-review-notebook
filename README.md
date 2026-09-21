@@ -36,10 +36,10 @@ The compact header includes each severity count and its description in the repor
 
 ## Settings
 
-| Setting                           | Default             | Purpose                                                     |
-| --------------------------------- | ------------------- | ----------------------------------------------------------- |
-| `codeReviewNotes.language`        | `en`                | Form, sidebar and message language: `en` or `ru`            |
-| `codeReviewNotes.reportFormat`    | `markdown`          | `markdown`, `pdf` or `both`                                 |
+| Setting                           | Default            | Purpose                                                                          |
+| --------------------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| `codeReviewNotes.language`        | `en`               | Form, sidebar and message language: `en` or `ru`                                 |
+| `codeReviewNotes.reportFormat`    | `markdown`         | `markdown`, `pdf` or `both`                                                      |
 | `codeReviewNotes.reportDirectory` | `Code Review Note` | Report root, absolute or relative to your home folder; a task subfolder is added |
 
 Changing the language preserves values in open forms. Static Command Palette entries, context menus and Settings descriptions follow the VS Code display language. Report labels use the extension language at completion; later exports keep that language.
@@ -58,7 +58,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.6.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.7.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 
