@@ -13,6 +13,7 @@ export type Block = {
   header?: boolean;
   compact?: boolean;
   prefix?: string;
+  label?: string;
 };
 export function reportDirectory(
   review: Review,
@@ -46,7 +47,12 @@ export function reportBlocks(review: Review): Block[] {
   ];
   for (const [label, value] of metadata) {
     if (value)
-      blocks.push({ kind: 'text', text: `${label}: ${value}`, header: true });
+      blocks.push({
+        kind: 'text',
+        text: `${label}: ${value}`,
+        label: label + ':',
+        header: true,
+      });
     if (label === t.taskTitle && review.details.taskUrl)
       blocks.push({
         kind: 'link',
@@ -59,6 +65,7 @@ export function reportBlocks(review: Review): Block[] {
     blocks.push({
       kind: 'text',
       header: true,
+      label: t[severity] + ':',
       text: `${t[severity]}: ${review.notes.filter((n) => n.severity === severity).length} (${t[`${severity}Help`]})`,
     });
   if (!review.notes.length) blocks.push({ kind: 'text', text: t.noNotes });
@@ -80,11 +87,13 @@ export function reportBlocks(review: Review): Block[] {
       blocks.push({
         kind: 'text',
         compact: true,
+        label: t.range + ':',
         text: `${t.range}: ${note.start}${note.end !== note.start ? `–${note.end}` : ''}`,
       });
     blocks.push({
       kind: 'text',
       compact: true,
+      label: t.severity + ':',
       text: `${t.severity}: ${t[note.severity]} (${t[`${note.severity}Help`]})`,
     });
     if (note.source)
@@ -96,7 +105,12 @@ export function reportBlocks(review: Review): Block[] {
       });
     if (!note.general)
       blocks.push(
-        { kind: 'text', compact: true, text: t.code + ':' },
+        {
+          kind: 'text',
+          compact: true,
+          text: t.code + ':',
+          label: t.code + ':',
+        },
         {
           kind: 'code',
           text: note.code,
@@ -124,7 +138,9 @@ export function markdown(blocks: Block[]): string {
           return `${fence}\n${block.text}\n${fence}`;
         }
         if (block.kind === 'link')
-          return `${escape(block.prefix ?? '')}[${escape(block.text)}](<${new URL(block.text).href.replace(/</g, '%3C').replace(/>/g, '%3E')}>)`;
+          return `${block.prefix ? '**' + escape(block.prefix.trimEnd()) + '** ' : ''}[${escape(block.text)}](<${new URL(block.text).href.replace(/</g, '%3C').replace(/>/g, '%3E')}>)`;
+        if (block.label)
+          return `**${escape(block.label)}**${escape(block.text.slice(block.label.length))}`;
         return (
           (block.kind === 'title'
             ? '# '
@@ -188,10 +204,19 @@ export async function pdf(
         block.kind === 'title' ? 22 : block.kind === 'heading' ? 13 : 10,
       )
       .fillColor('#202632');
-    if (block.prefix) doc.text(block.prefix, { continued: true, lineGap: 0 });
-    doc
-      .fillColor(block.kind === 'link' ? '#165db5' : '#202632')
-      .text(block.text, {
+    const label = block.prefix ?? block.label;
+    const value = block.label
+      ? block.text.slice(block.label.length)
+      : block.text;
+    if (label) {
+      doc.font(join(dirname(font), 'NotoSans-Bold.ttf')).text(label, {
+        continued: value.length > 0,
+        lineGap: block.header || block.compact ? 0 : 3,
+      });
+      doc.font(font);
+    }
+    if (value)
+      doc.fillColor(block.kind === 'link' ? '#165db5' : '#202632').text(value, {
         lineGap: block.header || block.compact ? 0 : 3,
         ...(block.kind === 'link' ? { link: block.text, underline: true } : {}),
       });
