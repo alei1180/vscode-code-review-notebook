@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.11
+
+- Bold field labels in PDF and Markdown while keeping values, descriptions and links in regular weight.
+- Preserve compact spacing, code typography and syntax highlighting.
+
 ## 0.1.10
 
 - Restore severity selection, report descriptions and severity counts for general notes.

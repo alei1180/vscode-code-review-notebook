@@ -2,7 +2,7 @@
   "name": "vscode-code-review-notes",
   "displayName": "Code Review Notes",
   "description": "Manual code reviews with local notes and Markdown or PDF reports.",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "private": true,
   "engines": {
     "vscode": "^1.96.0",
