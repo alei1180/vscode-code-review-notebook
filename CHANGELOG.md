@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.15
+
+- Start reviews from local files without an open workspace folder.
+- Capture notes from the selected side of a file comparison, including Git snapshots.
+- Explain missing editors, unsaved files and files outside the review project separately.
+
 ## 0.1.14
 
 - Place the extension logo on a filled light circular background with an outline for visibility in light and dark themes.
