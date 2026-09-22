@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.13
+
+- Use the new notebook, braces and magnifying glass logo as the extension icon.
+- Match the Activity Bar icon to the new identity with a theme-aware monochrome version.
+
 ## 0.1.12
 
 - Continue adding a code or general note after creating a review when no unfinished review exists.
