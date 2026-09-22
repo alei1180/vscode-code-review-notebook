@@ -19,6 +19,7 @@ import {
   type Note,
 } from './model';
 import { Store, isCode } from './storage';
+import { openReport } from './open-report';
 import { strings, type Key } from './i18n';
 import { form, FieldError, type Field } from './forms';
 import { noteFields } from './note-fields';
@@ -621,14 +622,37 @@ class Controller implements vscode.Disposable {
       const first = files[0];
       if (first?.endsWith('.md'))
         await vscode.window.showTextDocument(vscode.Uri.file(first));
-      else if (
-        first &&
-        (await vscode.window.showInformationMessage(
+      else if (first) {
+        const action = await vscode.window.showInformationMessage(
           t('exported'),
           t('open'),
-        )) === t('open')
-      )
-        await vscode.env.openExternal(vscode.Uri.file(first));
+          t('showInFolder'),
+        );
+        if (action === t('showInFolder')) {
+          await vscode.commands.executeCommand(
+            'revealFileInOS',
+            vscode.Uri.file(first),
+          );
+        } else if (action === t('open')) {
+          let opened = false;
+          try {
+            opened = await openReport(first);
+          } catch {
+            // Opening a viewer must not turn a successful export into an error.
+          }
+          if (
+            !opened &&
+            (await vscode.window.showWarningMessage(
+              t('openFailed'),
+              t('showInFolder'),
+            )) === t('showInFolder')
+          )
+            await vscode.commands.executeCommand(
+              'revealFileInOS',
+              vscode.Uri.file(first),
+            );
+        }
+      }
     } finally {
       this.busy = false;
     }

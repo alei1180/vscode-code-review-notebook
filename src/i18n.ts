@@ -69,6 +69,9 @@ export const en = {
   pdf: 'PDF',
   both: 'Markdown + PDF',
   exported: 'Report saved.',
+  showInFolder: 'Show in Folder',
+  openFailed:
+    'The report was saved, but its viewer could not be opened. You can open the file from its folder.',
   open: 'Open report',
   conflict:
     'A different file already exists. Choose another report folder in settings.',
@@ -152,6 +155,9 @@ export const ru: Record<Key, string> = {
   pdf: 'PDF',
   both: 'Markdown + PDF',
   exported: 'Отчёт сохранён.',
+  showInFolder: 'Показать в папке',
+  openFailed:
+    'Отчёт сохранён, но не удалось открыть программу просмотра. Откройте файл из его папки.',
   open: 'Открыть отчёт',
   conflict:
     'Файл с другим содержимым уже существует. Выберите другую папку отчётов в настройках.',

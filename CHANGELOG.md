@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.16
+
+- Open PDF reports through Windows Explorer using a native file path.
+- Add Show in Folder after PDF export and keep viewer failures separate from successful exports.
+
 ## 0.1.15
 
 - Start reviews from local files without an open workspace folder.
