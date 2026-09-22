@@ -50,11 +50,18 @@ async function main() {
     },
     UIKind: { Desktop: 1 },
     env: { uiKind: 1 },
-    Uri: {
-      parse: uri,
-      file: (file) => uri(pathToFileURL(file).href),
-      joinPath: (root, ...parts) =>
-        uri(pathToFileURL(path.join(root.fsPath, ...parts)).href),
+    Uri: class {
+      static [Symbol.hasInstance](value) {
+        return Boolean(
+          value &&
+          typeof value.fsPath === 'string' &&
+          typeof value.toString === 'function',
+        );
+      }
+      static parse = uri;
+      static file = (file) => uri(pathToFileURL(file).href);
+      static joinPath = (root, ...parts) =>
+        uri(pathToFileURL(path.join(root.fsPath, ...parts)).href);
     },
     ViewColumn: { Active: 1 },
     ProgressLocation: { Notification: 15 },
@@ -284,6 +291,7 @@ async function main() {
             end: { line: 2, character: 0 },
           },
         };
+        vscode.workspace.workspaceFolders = [];
         attachFile = false;
         const previousCount = panelCount;
         const pendingCommand = handlers.get('codeReviewNotes.' + command)();
@@ -356,6 +364,75 @@ async function main() {
         assert.deepEqual(errors, []);
       }
     }
+    // Context menus must capture the selected diff side even if another editor is active.
+    const initial = createReview(root.toString(), {
+      taskTitle: 'Diff',
+      taskNumber: 'DIFF',
+      assignee: 'A',
+      reviewer: 'R',
+    });
+    await fs.writeFile(
+      databaseFile,
+      JSON.stringify({ version: 1, reviews: [initial], active: initial.id }),
+    );
+    const diffUri = vscode.Uri.file(path.join(directory, 'original.md'));
+    await fs.writeFile(diffUri.fsPath, 'original\nleft side');
+    vscode.window.activeTextEditor = undefined;
+    vscode.window.visibleTextEditors = [
+      {
+        document: {
+          uri: diffUri,
+          isUntitled: false,
+          isDirty: false,
+          languageId: 'markdown',
+          getText: () => 'original\nleft side',
+        },
+        selection: {
+          start: { line: 1, character: 0 },
+          end: { line: 1, character: 9 },
+        },
+      },
+    ];
+    await handlers.get('codeReviewNotes.add')(diffUri);
+    await receive({
+      type: 'save',
+      values: {
+        module: 'original.md',
+        comment: 'Diff note',
+        severity: 'minor',
+        source: '',
+      },
+    });
+    const diffReview = JSON.parse(await fs.readFile(databaseFile, 'utf8'))
+      .reviews[0];
+    assert.equal(diffReview.notes.at(-1).file, 'original.md');
+    assert.equal(diffReview.notes.at(-1).code, 'left side');
+    assert.equal(diffReview.notes.at(-1).start, 2);
+    assert.deepEqual(errors, []);
+    const gitEditor = vscode.window.visibleTextEditors[0];
+    gitEditor.document.uri = {
+      ...diffUri,
+      scheme: 'git',
+      query: JSON.stringify({ path: diffUri.fsPath, ref: 'HEAD' }),
+      toString: () => 'git:test',
+    };
+    gitEditor.document.getText = () => 'historical\nGit snapshot';
+    vscode.window.activeTextEditor = gitEditor;
+    await handlers.get('codeReviewNotes.add')();
+    await receive({
+      type: 'save',
+      values: {
+        module: 'original.md',
+        comment: 'Git note',
+        severity: 'minor',
+        source: '',
+      },
+    });
+    const gitReview = JSON.parse(await fs.readFile(databaseFile, 'utf8'))
+      .reviews[0];
+    assert.equal(gitReview.notes.at(-1).file, 'original.md');
+    assert.equal(gitReview.notes.at(-1).code, 'Git snapshot');
+    assert.deepEqual(errors, []);
     console.log(
       'Start-to-note continuation, selection capture, validation and cancellation passed.',
     );

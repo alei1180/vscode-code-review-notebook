@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { homedir } from 'node:os';
 import { randomUUID } from 'node:crypto';
-import { join, relative, isAbsolute } from 'node:path';
+import { join, relative, isAbsolute, dirname } from 'node:path';
 import { z } from 'zod';
 import {
   createReview,
@@ -88,7 +88,15 @@ class Controller implements vscode.Disposable {
     command('start', async () => {
       await this.start();
     });
-    command('add', () => this.add());
+    this.disposables.push(
+      vscode.commands.registerCommand(
+        'codeReviewNotes.add',
+        (argument: unknown) =>
+          this.add(argument instanceof vscode.Uri ? argument : undefined).catch(
+            (error) => this.error(error),
+          ),
+      ),
+    );
     command('addGeneral', (item) => this.addGeneral(item));
     command('select', async (item) => {
       if (item)
@@ -158,7 +166,9 @@ class Controller implements vscode.Disposable {
     const projects = new Set(
       vscode.workspace.workspaceFolders?.map((f) => f.uri.toString()) ?? [],
     );
-    this.tree.reviews = db.reviews.filter((r) => projects.has(r.project));
+    this.tree.reviews = db.reviews.filter(
+      (r) => projects.size === 0 || projects.has(r.project),
+    );
     this.tree.active = db.active;
     this.tree.refresh();
   }
@@ -188,6 +198,7 @@ class Controller implements vscode.Disposable {
   private async pick(
     item: Item | undefined,
     unfinished: boolean,
+    sourceUri?: vscode.Uri,
   ): Promise<Review | undefined> {
     this.supported();
     await this.refresh();
@@ -199,7 +210,7 @@ class Controller implements vscode.Disposable {
           Number(b.id === this.tree.active) - Number(a.id === this.tree.active),
       );
     if (!reviews.length) {
-      if (unfinished) return this.start(true);
+      if (unfinished) return this.start(true, sourceUri);
       await this.start();
       return;
     }
@@ -213,13 +224,22 @@ class Controller implements vscode.Disposable {
     );
     return selected?.review;
   }
-  private async start(waitForReview = false): Promise<Review | undefined> {
+  private async start(
+    waitForReview = false,
+    sourceUri?: vscode.Uri,
+  ): Promise<Review | undefined> {
     this.supported();
     const folders =
       vscode.workspace.workspaceFolders?.filter(
         (f) => f.uri.scheme === 'file',
       ) ?? [];
-    if (!folders.length) throw new UserError('unavailable');
+    if (!folders.length) {
+      const source = sourceUri ?? vscode.window.activeTextEditor?.document.uri;
+      if (!source || source.scheme !== 'file')
+        throw new UserError('unavailable');
+      const folderUri = vscode.Uri.file(dirname(source.fsPath));
+      folders.push({ uri: folderUri, name: dirname(source.fsPath), index: 0 });
+    }
     const folder =
       folders.length === 1
         ? folders[0]
@@ -311,31 +331,58 @@ class Controller implements vscode.Disposable {
     );
     return saved ? savedReview : undefined;
   }
-  private async add(): Promise<void> {
+  private async add(contextUri?: vscode.Uri): Promise<void> {
     this.supported();
-    const editor = vscode.window.activeTextEditor;
-    if (
-      !editor ||
-      editor.document.isUntitled ||
-      editor.document.isDirty ||
-      editor.document.uri.scheme !== 'file'
-    )
-      throw new UserError('unavailable');
-    const uri = editor.document.uri,
-      content = editor.document.getText(),
+    const active = vscode.window.activeTextEditor;
+    const editor = contextUri
+      ? active?.document.uri.toString() === contextUri.toString()
+        ? active
+        : vscode.window.visibleTextEditors.find(
+            (candidate) =>
+              candidate.document.uri.toString() === contextUri.toString(),
+          )
+      : active;
+    if (!editor) throw new UserError('noEditor');
+    if (editor.document.isUntitled || editor.document.isDirty)
+      throw new UserError('saveFile');
+    const sourceUri = editor.document.uri;
+    let uri = sourceUri;
+    if (sourceUri.scheme === 'git') {
+      // Git can append .git to the URI path; its query holds the real file path.
+      let source: unknown;
+      try {
+        source = JSON.parse(sourceUri.query);
+      } catch {
+        throw new UserError('unsupportedSource');
+      }
+      const parsed = z
+        .object({ path: z.string().min(1), ref: z.string() })
+        .safeParse(source);
+      if (!parsed.success || !isAbsolute(parsed.data.path))
+        throw new UserError('unsupportedSource');
+      uri = vscode.Uri.file(parsed.data.path);
+    } else if (sourceUri.scheme !== 'file') {
+      throw new UserError('unsupportedSource');
+    }
+    const content = editor.document.getText(),
       selection = editor.selection;
     const range = lineRange(
       selection.start.line,
       selection.end.line,
       selection.end.character,
     );
-    const review = await this.pick(undefined, true);
+    const review = await this.pick(undefined, true, uri);
     if (!review) return;
     this.mutable(review);
     const root = vscode.Uri.parse(review.project);
     const path = relative(root.fsPath, uri.fsPath);
-    if (path.startsWith('..') || isAbsolute(path))
-      throw new UserError('unavailable');
+    if (
+      path === '..' ||
+      path.startsWith('../') ||
+      path.startsWith('..\\') ||
+      isAbsolute(path)
+    )
+      throw new UserError('outsideProject');
     this.noteForm(
       review,
       {
@@ -351,7 +398,7 @@ class Controller implements vscode.Disposable {
       },
       content,
       false,
-      uri,
+      sourceUri,
     );
   }
   private async addGeneral(item?: Item): Promise<void> {

@@ -86,3 +86,5 @@ MIT — Copyright 2026 Alexander Osadchy.
 Reports default to `~/Code Review Note/<task number>/`. If the optional task number is empty, the task title is used instead (sanitized for filenames). Task URL is optional and only appears in reports when filled. Dates use local time in `YYYY/MM/DD HH:mm` format. Each note shows its severity below the line numbers, followed by `Code snapshot:`.
 
 General notes have a severity selector and contribute to severity counts. Notes saved without a severity in 0.1.9 default to Minor. Severity descriptions appear in parentheses. Source links follow the severity inline, before code snapshots; the task URL follows the task title.
+
+When only files are open, a new review uses the active file’s directory as its project. In a comparison, select lines on the desired side before adding a note. Both local files and Git snapshots are supported; Git notes preserve the selected historical code, while later file navigation opens the working-tree file.

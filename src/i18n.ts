@@ -43,6 +43,12 @@ export const en = {
   urlError: 'Enter an HTTP or HTTPS URL.',
   error:
     'The operation could not be completed. Your saved data has been preserved. See Code Review Notes output.',
+  noEditor: 'Select a line on the side of the comparison you want to review.',
+  saveFile: 'Save the file before adding a review note.',
+  unsupportedSource:
+    'This document is not supported. Open a local file or a Git comparison in a local project.',
+  outsideProject:
+    'The selected file is outside the review project. Select a review for the folder containing this file.',
   unavailable: 'Open a saved, unmodified file in a trusted local project.',
   missing:
     'The original file or line is unavailable. The saved note remains accessible.',
@@ -118,6 +124,13 @@ export const ru: Record<Key, string> = {
   urlError: 'Укажите ссылку HTTP или HTTPS.',
   error:
     'Не удалось завершить операцию. Сохранённые данные не потеряны. Подробности — в канале Code Review Notes.',
+  noEditor:
+    'Выберите строку на той стороне сравнения, к которой хотите добавить замечание.',
+  saveFile: 'Сохраните файл перед добавлением замечания.',
+  unsupportedSource:
+    'Этот документ не поддерживается. Откройте локальный файл или Git-сравнение в локальном проекте.',
+  outsideProject:
+    'Выбранный файл находится вне проекта ревью. Выберите ревью для папки, содержащей этот файл.',
   unavailable:
     'Откройте сохранённый файл без несохранённых изменений в доверенном локальном проекте.',
   missing:
