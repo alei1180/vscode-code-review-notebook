@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.12
+
+- Continue adding a code or general note after creating a review when no unfinished review exists.
+- Preserve the original editor selection and code snapshot while task details are entered.
+- Cancel the continuation when the start form is closed; keep validation errors in the start form.
+
 ## 0.1.11
 
 - Bold field labels in PDF and Markdown while keeping values, descriptions and links in regular weight.
