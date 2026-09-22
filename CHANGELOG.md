@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.14
+
+- Place the extension logo on a filled light circular background with an outline for visibility in light and dark themes.
+
 ## 0.1.13
 
 - Use the new notebook, braces and magnifying glass logo as the extension icon.
