@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.18
+
+- Replace the extension logo with the circular magnifying glass and enlarged braces design.
+- Match the theme-aware Activity Bar icon to the simplified logo.
+
 ## 0.1.17
 
 - Adapt the SQM lecture-notes light style to A4 PDF reports: green title banner, orange headings, blue links and CMU Sans with Cyrillic support.
