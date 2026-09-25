@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.17
+
+- Adapt the SQM lecture-notes light style to A4 PDF reports: green title banner, orange headings, blue links and CMU Sans with Cyrillic support.
+- Add page numbers while preserving report structure, bold field labels and code highlighting.
+
 ## 0.1.16
 
 - Open PDF reports through Windows Explorer using a native file path.
