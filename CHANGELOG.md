@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.19
+
+- Recolor the circular extension logo with terminal green on a black background.
+
 ## 0.1.18
 
 - Replace the extension logo with the circular magnifying glass and enlarged braces design.
