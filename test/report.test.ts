@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createReview, reserveReport } from '../src/model';
 import {
+  pdf,
   markdown,
   reportBlocks,
   exportReport,
@@ -134,5 +135,20 @@ test('task links are optional and dates and report folders follow user settings'
   assert.equal(
     reportDirectory(r, '/profile'),
     join('/profile', 'Code Review Note', 'outside'),
+  );
+});
+
+test('PDF footer does not create an extra page', async () => {
+  const data = await pdf(
+    [
+      { kind: 'title', text: 'Отчёт о код-ревью' },
+      { kind: 'text', text: 'Кириллица и Latin' },
+    ],
+    join(process.cwd(), 'media/fonts/NotoSans-Regular.ttf'),
+    '2026-09-25T10:00:00.000Z',
+  );
+  assert.equal(
+    [...data.toString('latin1').matchAll(/\/Type \/Page\b/g)].length,
+    1,
   );
 });

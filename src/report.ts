@@ -166,9 +166,20 @@ export async function pdf(
   font: string,
   date: string,
 ): Promise<Buffer> {
+  font = join(dirname(font), 'cmunss.otf');
+  const boldFont = join(dirname(font), 'cmunsx.otf');
+  const palette = {
+    paper: '#FEFEFE',
+    ink: '#232527',
+    green: '#5C946E',
+    orange: '#F06543',
+    blue: '#5299D3',
+    grey: '#808080',
+  };
   const doc = new PDFDocument({
     size: 'A4',
-    margin: 48,
+    margins: { top: 48, bottom: 48, left: 56, right: 56 },
+    bufferPages: true,
     font,
     info: {
       Title: blocks[0]?.text ?? 'Code Review',
@@ -182,7 +193,30 @@ export async function pdf(
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
   });
+  const paintPage = () => {
+    doc
+      .save()
+      .rect(0, 0, doc.page.width, doc.page.height)
+      .fill(palette.paper)
+      .restore();
+  };
+  paintPage();
+  doc.on('pageAdded', paintPage);
   for (const block of blocks) {
+    if (block.kind === 'title') {
+      const x = doc.page.margins.left,
+        y = doc.y;
+      const width = doc.page.width - x - doc.page.margins.right;
+      doc.font(boldFont).fontSize(22);
+      const height = doc.heightOfString(block.text, { width: width - 20 }) + 16;
+      doc.save().rect(x, y, width, height).fill(palette.green).restore();
+      doc
+        .fillColor(palette.paper)
+        .text(block.text, x + 10, y + 8, { width: width - 20 });
+      doc.x = x;
+      doc.y = y + height + 16;
+      continue;
+    }
     if (block.kind === 'code') {
       await drawCode(
         doc,
@@ -193,34 +227,72 @@ export async function pdf(
       doc.font(font);
       continue;
     }
-    if (block.kind === 'title' || block.kind === 'heading') {
-      if (doc.y > 730) doc.addPage();
+    if (block.kind === 'heading') {
+      if (doc.y + 80 > doc.page.height - doc.page.margins.bottom) doc.addPage();
       doc.moveDown(0.5);
     }
-    const bold = block.kind === 'title' || block.kind === 'heading';
+    const bold = block.kind === 'heading';
     doc
-      .font(bold ? join(dirname(font), 'NotoSans-Bold.ttf') : font)
-      .fontSize(
-        block.kind === 'title' ? 22 : block.kind === 'heading' ? 13 : 10,
-      )
-      .fillColor('#202632');
+      .font(bold ? boldFont : font)
+      .fontSize(block.kind === 'heading' ? 14 : 11)
+      .fillColor(bold ? palette.orange : palette.ink);
     const label = block.prefix ?? block.label;
     const value = block.label
       ? block.text.slice(block.label.length)
       : block.text;
     if (label) {
-      doc.font(join(dirname(font), 'NotoSans-Bold.ttf')).text(label, {
+      const width =
+        doc.page.width - doc.page.margins.left - doc.page.margins.right;
+      const height = doc.font(boldFont).heightOfString(label + value, {
+        width,
+        lineGap: block.header || block.compact ? 0 : 3,
+      });
+      const pageHeight =
+        doc.page.height - doc.page.margins.top - doc.page.margins.bottom;
+      if (
+        height < pageHeight &&
+        doc.y + height > doc.page.height - doc.page.margins.bottom
+      )
+        doc.addPage();
+      doc.font(boldFont).text(label, {
         continued: value.length > 0,
         lineGap: block.header || block.compact ? 0 : 3,
       });
       doc.font(font);
     }
     if (value)
-      doc.fillColor(block.kind === 'link' ? '#165db5' : '#202632').text(value, {
-        lineGap: block.header || block.compact ? 0 : 3,
-        ...(block.kind === 'link' ? { link: block.text, underline: true } : {}),
-      });
+      doc
+        .fillColor(
+          block.kind === 'link'
+            ? palette.blue
+            : bold
+              ? palette.orange
+              : palette.ink,
+        )
+        .text(value, {
+          lineGap: block.header || block.compact ? 0 : 3,
+          ...(block.kind === 'link'
+            ? { link: block.text, underline: true }
+            : {}),
+        });
     if (!block.compact) doc.moveDown(block.header ? 0.15 : 0.6);
+  }
+  const pages = doc.bufferedPageRange();
+  for (let page = pages.start; page < pages.start + pages.count; page++) {
+    doc.switchToPage(page);
+    const bottomMargin = doc.page.margins.bottom;
+    doc.page.margins.bottom = 0;
+    doc
+      .font(font)
+      .fontSize(9)
+      .fillColor(palette.grey)
+      .text(
+        `${page + 1} / ${pages.count}`,
+        doc.page.width - doc.page.margins.right - 60,
+        doc.page.height - 30,
+        { width: 60, align: 'right', lineBreak: false },
+      );
+    doc.page.margins.bottom = bottomMargin;
   }
   doc.end();
   return result;
