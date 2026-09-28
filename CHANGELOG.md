@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.25
+
+- Add scoped keyboard chords for all extension context-menu commands using a shared review prefix.
+- Use the selected review or note for tree shortcuts, and retain deletion confirmation.
+- Replace the old Add Review Note shortcut to avoid built-in regex command conflicts.
+
 ## 0.1.24
 
 - Add Open Reports Folder as the last command in extension context menus, using the configured report directory.

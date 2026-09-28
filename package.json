@@ -2,7 +2,7 @@
   "name": "vscode-code-review-notes",
   "displayName": "Code Review Notes",
   "description": "Manual code reviews with local notes and Markdown or PDF reports.",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "private": true,
   "engines": {
     "vscode": "^1.96.0",
@@ -183,10 +183,124 @@
     ],
     "keybindings": [
       {
+        "command": "codeReviewNotes.start",
+        "key": "ctrl+alt+shift+r s",
+        "mac": "cmd+alt+shift+r s",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && editorTextFocus && resourceScheme == file"
+      },
+      {
+        "command": "codeReviewNotes.start",
+        "key": "ctrl+alt+shift+r s",
+        "mac": "cmd+alt+shift+r s",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus"
+      },
+      {
         "command": "codeReviewNotes.add",
-        "key": "ctrl+alt+r",
-        "mac": "cmd+alt+r",
-        "when": "editorTextFocus && resourceScheme == file"
+        "key": "ctrl+alt+shift+r n",
+        "mac": "cmd+alt+shift+r n",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && editorTextFocus && resourceScheme == file"
+      },
+      {
+        "command": "codeReviewNotes.addGeneral",
+        "key": "ctrl+alt+shift+r g",
+        "mac": "cmd+alt+shift+r g",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && editorTextFocus && resourceScheme == file"
+      },
+      {
+        "command": "codeReviewNotes.addGeneral",
+        "key": "ctrl+alt+shift+r g",
+        "mac": "cmd+alt+shift+r g",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus",
+        "args": {
+          "fromReviewTree": true
+        }
+      },
+      {
+        "command": "codeReviewNotes.complete",
+        "key": "ctrl+alt+shift+r c",
+        "mac": "cmd+alt+shift+r c",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && editorTextFocus && resourceScheme == file"
+      },
+      {
+        "command": "codeReviewNotes.complete",
+        "key": "ctrl+alt+shift+r c",
+        "mac": "cmd+alt+shift+r c",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus",
+        "args": {
+          "fromReviewTree": true
+        }
+      },
+      {
+        "command": "codeReviewNotes.export",
+        "key": "ctrl+alt+shift+r x",
+        "mac": "cmd+alt+shift+r x",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && editorTextFocus && resourceScheme == file"
+      },
+      {
+        "command": "codeReviewNotes.export",
+        "key": "ctrl+alt+shift+r x",
+        "mac": "cmd+alt+shift+r x",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus",
+        "args": {
+          "fromReviewTree": true
+        }
+      },
+      {
+        "command": "codeReviewNotes.openReportDirectory",
+        "key": "ctrl+alt+shift+r o",
+        "mac": "cmd+alt+shift+r o",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && editorTextFocus && resourceScheme == file"
+      },
+      {
+        "command": "codeReviewNotes.openReportDirectory",
+        "key": "ctrl+alt+shift+r o",
+        "mac": "cmd+alt+shift+r o",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus"
+      },
+      {
+        "command": "codeReviewNotes.editReview",
+        "key": "ctrl+alt+shift+r r",
+        "mac": "cmd+alt+shift+r r",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus",
+        "args": {
+          "fromReviewTree": true
+        }
+      },
+      {
+        "command": "codeReviewNotes.copy",
+        "key": "ctrl+alt+shift+r d",
+        "mac": "cmd+alt+shift+r d",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus",
+        "args": {
+          "fromReviewTree": true
+        }
+      },
+      {
+        "command": "codeReviewNotes.viewNote",
+        "key": "ctrl+alt+shift+r v",
+        "mac": "cmd+alt+shift+r v",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus",
+        "args": {
+          "fromReviewTree": true
+        }
+      },
+      {
+        "command": "codeReviewNotes.editNote",
+        "key": "ctrl+alt+shift+r e",
+        "mac": "cmd+alt+shift+r e",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus",
+        "args": {
+          "fromReviewTree": true
+        }
+      },
+      {
+        "command": "codeReviewNotes.deleteNote",
+        "key": "ctrl+alt+shift+r delete",
+        "mac": "cmd+alt+shift+r delete",
+        "when": "isWorkspaceTrusted && !isWeb && !remoteName && focusedView == codeReviewNotes.reviews && listFocus && !inputFocus",
+        "args": {
+          "fromReviewTree": true
+        }
       }
     ],
     "configuration": {

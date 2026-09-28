@@ -82,7 +82,12 @@ class Controller implements vscode.Disposable {
           'codeReviewNotes.' + name,
           (argument: unknown) => {
             // Editor context menus pass a URI; only our tree passes a review item.
-            const parsed = itemSchema.safeParse(argument);
+            const fromReviewTree = z
+              .object({ fromReviewTree: z.literal(true) })
+              .safeParse(argument).success;
+            const selected = fromReviewTree ? view.selection[0] : argument;
+            if (fromReviewTree && !selected) return Promise.resolve();
+            const parsed = itemSchema.safeParse(selected);
             const item: Item | undefined = parsed.success
               ? {
                   review: parsed.data.review,

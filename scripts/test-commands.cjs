@@ -22,6 +22,9 @@ async function main() {
     toString: () => value,
   });
   const root = uri(pathToFileURL(directory).href);
+  let selectedItems = [];
+  let confirmDelete = false;
+  let confirmations = 0;
   let reportDirectory;
   const openedDirectories = [];
   let picks = 0;
@@ -76,7 +79,12 @@ async function main() {
     ViewColumn: { Active: 1 },
     ProgressLocation: { Notification: 15 },
     window: {
-      createTreeView: disposable,
+      createTreeView: () => ({
+        ...disposable(),
+        get selection() {
+          return selectedItems;
+        },
+      }),
       createWebviewPanel: () => {
         panelCount++;
         let onDispose = () => {};
@@ -105,6 +113,11 @@ async function main() {
       onDidChangeWindowState: disposable,
       createOutputChannel: () => ({ ...disposable(), appendLine() {} }),
       showErrorMessage: (message) => errors.push(message),
+      showWarningMessage: async (_message, options, remove) => {
+        assert.equal(options.modal, true);
+        confirmations++;
+        return confirmDelete ? remove : undefined;
+      },
       showQuickPick: async (options) => {
         picks++;
         return cancel
@@ -485,6 +498,39 @@ async function main() {
       .reviews[0];
     assert.equal(gitReview.notes.at(-1).file, 'original.md');
     assert.equal(gitReview.notes.at(-1).code, 'Git snapshot');
+    // Keyboard commands must act on the selected tree item, not a review picker.
+    selectedItems = [{ review: gitReview, note: gitReview.notes.at(-1) }];
+    const picksBeforeShortcut = picks;
+    messages = [];
+    await handlers.get('codeReviewNotes.viewNote')({ fromReviewTree: true });
+    await receive({ type: 'ready' });
+    const viewed = messages.find((message) => message.type === 'init');
+    assert.equal(viewed.readonly, true);
+    assert.equal(
+      viewed.fields.find((field) => field.name === 'comment').value,
+      'Git note',
+    );
+    assert.equal(picks, picksBeforeShortcut);
+    await receive({ type: 'cancel' });
+    const noteCount = gitReview.notes.length;
+    await handlers.get('codeReviewNotes.deleteNote')({ fromReviewTree: true });
+    assert.equal(confirmations, 1);
+    assert.equal(
+      JSON.parse(await fs.readFile(databaseFile, 'utf8')).reviews[0].notes
+        .length,
+      noteCount,
+    );
+    confirmDelete = true;
+    await handlers.get('codeReviewNotes.deleteNote')({ fromReviewTree: true });
+    assert.equal(
+      JSON.parse(await fs.readFile(databaseFile, 'utf8')).reviews[0].notes
+        .length,
+      noteCount - 1,
+    );
+    selectedItems = [];
+    await handlers.get('codeReviewNotes.complete')({ fromReviewTree: true });
+    assert.equal(picks, picksBeforeShortcut);
+
     assert.deepEqual(errors, []);
     console.log(
       'Start-to-note continuation, selection capture, validation and cancellation passed.',

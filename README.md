@@ -18,7 +18,7 @@ Manual code reviews in VS Code. Collect notes beside your code and export a loca
 
 1. Open a trusted local project, or a saved local file in a window without a folder, and select **Code Review Notes** in the activity bar.
 2. Choose **Start Code Review**. Enter Task Title, Assignee and Reviewer. Task Number and Task URL are optional. Review Number defaults to 1 and must be a positive integer unique within the task and project. Save the form. Assignee and Reviewer offer separate lists of previously saved names, including existing reviews across projects. You can always enter a new name. Names are stored locally and remembered only after saving the form.
-3. Open a saved file, select lines, then use **Code Review Notes: Add Review Note** from the **Code Review Note** editor submenu or Command Palette. The default shortcut is `Ctrl+Alt+R` (`Cmd+Alt+R` on macOS).
+3. Open a saved file, select lines, then use **Code Review Notes: Add Review Note** from the **Code Review Note** editor submenu or Command Palette. The default shortcut is `Ctrl+Alt+Shift+R`, then `N` (`Cmd+Alt+Shift+R`, then `N` on macOS).
 4. Choose the review, enter a comment, severity and optional source URL, and save.
 5. Use a review's context menu to **Complete Review**. Choose Markdown, PDF or both.
 
@@ -74,7 +74,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.24.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.25.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 
@@ -100,3 +100,23 @@ See [validation record](docs/VALIDATION.md), [architecture](docs/ARCHITECTURE.md
 MIT — Copyright 2026 Alexander Osadchy.
 
 The last item in the Code Review Note context menu, **Open Reports Folder**, opens the configured report root in your system file manager. The folder is created if needed.
+
+## Keyboard shortcuts
+
+Press `Ctrl+Alt+Shift+R` (`Cmd+Alt+Shift+R` on macOS), release the keys, then press the action key. The prefix stands for Review. This replaces the old single `Ctrl+Alt+R` / `Cmd+Alt+R` binding to avoid VS Code command conflicts.
+
+| Action key | Command                              | Context                        |
+| ---------- | ------------------------------------ | ------------------------------ |
+| `S`        | Start Code Review                    | Editor or review tree          |
+| `N`        | Add Review Note                      | Editor                         |
+| `G`        | Add General Note                     | Editor or review tree          |
+| `C`        | Complete Review                      | Editor or review tree          |
+| `X`        | Export Report                        | Editor or review tree          |
+| `O`        | Open Reports Folder                  | Editor or review tree          |
+| `R`        | Edit Review                          | Review tree                    |
+| `D`        | New Review for This Task (Duplicate) | Review tree                    |
+| `V`        | View Saved Note                      | Review tree                    |
+| `E`        | Edit Note                            | Review tree                    |
+| `Delete`   | Delete Note                          | Review tree, with confirmation |
+
+Select a review or note before using tree shortcuts. Editor shortcuts require a local file; completion and export show the review picker. Shortcuts are inactive in terminals, form inputs and other views. User bindings or other extensions can assign the same keys; customize them in Keyboard Shortcuts using `@ext:alei1180.vscode-code-review-notes`.
