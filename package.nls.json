@@ -15,5 +15,6 @@
   "setting.language": "Language of extension forms and messages. Commands follow the VS Code language.",
   "setting.format": "Default report format.",
   "setting.directory": "Report root folder. Relative paths are resolved from your home folder; reports are grouped by task number or title.",
-  "command.addGeneral": "Add General Note"
+  "command.addGeneral": "Add General Note",
+  "command.openReportDirectory": "Open Reports Folder"
 }

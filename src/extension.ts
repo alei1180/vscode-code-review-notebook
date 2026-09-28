@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { homedir } from 'node:os';
+import { mkdir } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { join, relative, isAbsolute, dirname } from 'node:path';
 import { z } from 'zod';
@@ -25,7 +26,12 @@ import { strings, type Key } from './i18n';
 import { form, FieldError, type Field } from './forms';
 import { noteFields } from './note-fields';
 import { ReviewTree, type Item } from './tree';
-import { exportReport, reportDirectory, ConflictError } from './report';
+import {
+  exportReport,
+  reportDirectory,
+  reportRootDirectory,
+  ConflictError,
+} from './report';
 
 class UserError extends Error {
   constructor(readonly key: Key) {
@@ -87,6 +93,17 @@ class Controller implements vscode.Disposable {
           },
         ),
       );
+    command('openReportDirectory', async () => {
+      const directory = reportRootDirectory(
+        homedir(),
+        vscode.workspace
+          .getConfiguration('codeReviewNotes')
+          .get<string>('reportDirectory'),
+      );
+      await mkdir(directory, { recursive: true });
+      if (!(await openReport(directory)))
+        throw new Error('Could not open reports folder');
+    });
     command('start', async () => {
       await this.start();
     });

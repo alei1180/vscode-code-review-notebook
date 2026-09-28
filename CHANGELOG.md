@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.24
+
+- Add Open Reports Folder as the last command in extension context menus, using the configured report directory.
+
 ## 0.1.23
 
 - Separate note headings with a blank line before and after in PDF and Markdown reports, including after general notes.

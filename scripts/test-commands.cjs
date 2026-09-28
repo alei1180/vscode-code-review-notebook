@@ -22,6 +22,8 @@ async function main() {
     toString: () => value,
   });
   const root = uri(pathToFileURL(directory).href);
+  let reportDirectory;
+  const openedDirectories = [];
   let picks = 0;
   let cancel = false;
   let attachFile = false;
@@ -45,11 +47,19 @@ async function main() {
       workspaceFolders: [{ uri: root }],
       onDidChangeConfiguration: disposable,
       getConfiguration: () => ({
-        get: (key) => ({ language: 'ru', reportFormat: 'both' })[key],
+        get: (key) =>
+          ({ language: 'ru', reportFormat: 'both', reportDirectory })[key],
       }),
     },
     UIKind: { Desktop: 1 },
-    env: { uiKind: 1 },
+    env: {
+      uiKind: 1,
+      openExternal: async (uri) => {
+        assert.ok((await fs.stat(uri.fsPath)).isDirectory());
+        openedDirectories.push(uri.fsPath);
+        return true;
+      },
+    },
     Uri: class {
       static [Symbol.hasInstance](value) {
         return Boolean(
@@ -120,7 +130,21 @@ async function main() {
           ? vscode
           : name === 'node:os'
             ? { ...localRequire(name), homedir: () => directory }
-            : localRequire(name),
+            : name === 'node:child_process'
+              ? {
+                  spawn: (program, [folder]) => {
+                    assert.equal(program, 'explorer.exe');
+                    assert.ok(
+                      require('node:fs').statSync(folder).isDirectory(),
+                    );
+                    openedDirectories.push(folder);
+                    const child = new (require('node:events').EventEmitter)();
+                    child.unref = () => {};
+                    queueMicrotask(() => child.emit('spawn'));
+                    return child;
+                  },
+                }
+              : localRequire(name),
       module,
       bundle,
       path.dirname(bundle),
@@ -131,6 +155,20 @@ async function main() {
       globalStorageUri: root,
       subscriptions,
     });
+    for (const configured of [
+      undefined,
+      'Custom reports',
+      path.join(directory, 'absolute reports'),
+    ]) {
+      reportDirectory = configured;
+      await handlers.get('codeReviewNotes.openReportDirectory')();
+      assert.deepEqual(errors, []);
+      assert.equal(
+        openedDirectories.at(-1),
+        path.resolve(directory, configured || 'Code Review Note'),
+      );
+    }
+    reportDirectory = undefined;
     const databaseFile = path.join(directory, 'reviews.json');
     for (const command of ['complete', 'export']) {
       for (const context of ['editor', 'palette', 'tree', 'cancel']) {

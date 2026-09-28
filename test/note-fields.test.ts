@@ -42,6 +42,19 @@ test('old notes remain readable and module edits never move source or lines', ()
 });
 test('context commands are nested under Code Review Note', async () => {
   const manifest = JSON.parse(await readFile('package.json', 'utf8'));
+  for (const menu of [
+    'codeReviewNotes.editorMenu',
+    'codeReviewNotes.itemMenu',
+  ]) {
+    const items = manifest.contributes.menus[menu];
+    const last = items.at(-1);
+    assert.equal(last.command, 'codeReviewNotes.openReportDirectory');
+    assert.ok(
+      items
+        .slice(0, -1)
+        .every((item: { group: string }) => item.group < last.group),
+    );
+  }
   for (const context of ['editor/context', 'view/item/context']) {
     for (const item of manifest.contributes.menus[context]) {
       assert.equal(item.command, undefined);

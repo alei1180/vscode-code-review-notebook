@@ -2,7 +2,7 @@
   "name": "vscode-code-review-notes",
   "displayName": "Code Review Notes",
   "description": "Manual code reviews with local notes and Markdown or PDF reports.",
-  "version": "0.1.23",
+  "version": "0.1.24",
   "private": true,
   "engines": {
     "vscode": "^1.96.0",
@@ -150,6 +150,12 @@
         "title": "%command.addGeneral%",
         "category": "Code Review Notes",
         "icon": "$(comment)"
+      },
+      {
+        "command": "codeReviewNotes.openReportDirectory",
+        "title": "%command.openReportDirectory%",
+        "category": "Code Review Notes",
+        "icon": "$(folder-opened)"
       }
     ],
     "viewsContainers": {
@@ -269,35 +275,47 @@
       "codeReviewNotes.itemMenu": [
         {
           "command": "codeReviewNotes.editReview",
-          "when": "view == codeReviewNotes.reviews && (viewItem == review)"
+          "when": "view == codeReviewNotes.reviews && (viewItem == review)",
+          "group": "1_review"
         },
         {
           "command": "codeReviewNotes.complete",
-          "when": "view == codeReviewNotes.reviews && (viewItem == review)"
+          "when": "view == codeReviewNotes.reviews && (viewItem == review)",
+          "group": "1_review"
         },
         {
           "command": "codeReviewNotes.copy",
-          "when": "view == codeReviewNotes.reviews && (viewItem == review || viewItem == completedReview)"
+          "when": "view == codeReviewNotes.reviews && (viewItem == review || viewItem == completedReview)",
+          "group": "1_review"
         },
         {
           "command": "codeReviewNotes.export",
-          "when": "view == codeReviewNotes.reviews && (viewItem == completedReview)"
+          "when": "view == codeReviewNotes.reviews && (viewItem == completedReview)",
+          "group": "1_review"
         },
         {
           "command": "codeReviewNotes.viewNote",
-          "when": "view == codeReviewNotes.reviews && (viewItem == note || viewItem == savedNote)"
+          "when": "view == codeReviewNotes.reviews && (viewItem == note || viewItem == savedNote)",
+          "group": "1_review"
         },
         {
           "command": "codeReviewNotes.editNote",
-          "when": "view == codeReviewNotes.reviews && (viewItem == note)"
+          "when": "view == codeReviewNotes.reviews && (viewItem == note)",
+          "group": "1_review"
         },
         {
           "command": "codeReviewNotes.deleteNote",
-          "when": "view == codeReviewNotes.reviews && (viewItem == note)"
+          "when": "view == codeReviewNotes.reviews && (viewItem == note)",
+          "group": "1_review"
         },
         {
           "command": "codeReviewNotes.addGeneral",
-          "when": "view == codeReviewNotes.reviews && viewItem == review"
+          "when": "view == codeReviewNotes.reviews && viewItem == review",
+          "group": "1_review"
+        },
+        {
+          "command": "codeReviewNotes.openReportDirectory",
+          "group": "9_reports"
         }
       ],
       "codeReviewNotes.editorMenu": [
@@ -320,6 +338,10 @@
         {
           "command": "codeReviewNotes.addGeneral",
           "group": "2_notes"
+        },
+        {
+          "command": "codeReviewNotes.openReportDirectory",
+          "group": "9_reports"
         }
       ]
     },

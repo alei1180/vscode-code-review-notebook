@@ -74,7 +74,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.23.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.24.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 
@@ -98,3 +98,5 @@ See [validation record](docs/VALIDATION.md), [architecture](docs/ARCHITECTURE.md
 ## License
 
 MIT — Copyright 2026 Alexander Osadchy.
+
+The last item in the Code Review Note context menu, **Open Reports Folder**, opens the configured report root in your system file manager. The folder is created if needed.

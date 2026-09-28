@@ -15,13 +15,16 @@ export type Block = {
   prefix?: string;
   label?: string;
 };
+export function reportRootDirectory(home: string, configured?: string): string {
+  return resolve(home, configured || 'Code Review Note');
+}
 export function reportDirectory(
   review: Review,
   home: string,
   configured?: string,
 ): string {
   return join(
-    resolve(home, configured || 'Code Review Note'),
+    reportRootDirectory(home, configured),
     safeName(review.details.taskNumber || review.details.taskTitle),
   );
 }
