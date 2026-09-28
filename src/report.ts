@@ -36,8 +36,8 @@ export function reportBlocks(review: Review): Block[] {
     t = strings(report.language);
   const blocks: Block[] = [{ kind: 'title', text: t.report }];
   const metadata: [string, string][] = [
-    [t.taskNumber, review.details.taskNumber],
     [t.taskTitle, review.details.taskTitle],
+    [t.taskNumber, review.details.taskNumber],
     [t.assignee, review.details.assignee],
     [t.reviewer, review.details.reviewer],
     [t.number, String(report.number)],
@@ -66,7 +66,7 @@ export function reportBlocks(review: Review): Block[] {
       kind: 'text',
       header: true,
       label: t[severity] + ':',
-      text: `${t[severity]}: ${review.notes.filter((n) => n.severity === severity).length} (${t[`${severity}Help`]})`,
+      text: `${t[severity]}: ${review.notes.filter((n) => n.severity === severity).length} (${t[`${severity}Help`].replace(/\.$/, '')})`,
     });
   if (!review.notes.length) blocks.push({ kind: 'text', text: t.noNotes });
   const ordered = [
@@ -94,7 +94,7 @@ export function reportBlocks(review: Review): Block[] {
       kind: 'text',
       compact: true,
       label: t.severity + ':',
-      text: `${t.severity}: ${t[note.severity]} (${t[`${note.severity}Help`]})`,
+      text: `${t.severity}: ${t[note.severity]} (${t[`${note.severity}Help`].replace(/\.$/, '')})`,
     });
     if (note.source)
       blocks.push({

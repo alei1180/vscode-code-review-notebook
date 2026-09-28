@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.20
+
+- Place the task title and optional task link before the task number in reports.
+- Omit trailing periods inside severity descriptions in both report formats and languages.
+
 ## 0.1.19
 
 - Recolor the circular extension logo with terminal green on a black background.
