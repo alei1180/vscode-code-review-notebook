@@ -154,7 +154,9 @@ export function markdown(blocks: Block[]): string {
           text +
           (index === blocks.length - 1
             ? ''
-            : blocks[index]?.compact && blocks[index + 1]?.kind !== 'code'
+            : blocks[index]?.compact &&
+                blocks[index + 1]?.kind !== 'code' &&
+                blocks[index + 1]?.kind !== 'heading'
               ? '  \n'
               : '\n\n'),
       )
@@ -227,9 +229,17 @@ export async function pdf(
       doc.font(font);
       continue;
     }
+    doc.font(font).fontSize(11);
+    const blankLine = doc.currentLineHeight(true);
     if (block.kind === 'heading') {
-      if (doc.y + 80 > doc.page.height - doc.page.margins.bottom) doc.addPage();
-      doc.moveDown(0.5);
+      const headingHeight = doc
+        .font(boldFont)
+        .fontSize(14)
+        .heightOfString(block.text);
+      const requiredHeight = headingHeight + blankLine * 4;
+      if (doc.y + requiredHeight > doc.page.height - doc.page.margins.bottom)
+        doc.addPage();
+      else doc.y += blankLine;
     }
     const bold = block.kind === 'heading';
     doc
@@ -275,7 +285,8 @@ export async function pdf(
             ? { link: block.text, underline: true }
             : {}),
         });
-    if (!block.compact) doc.moveDown(block.header ? 0.15 : 0.6);
+    if (block.kind === 'heading') doc.y += blankLine;
+    else if (!block.compact) doc.moveDown(block.header ? 0.15 : 0.6);
   }
   const pages = doc.bufferedPageRange();
   for (let page = pages.start; page < pages.start + pages.count; page++) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.23
+
+- Separate note headings with a blank line before and after in PDF and Markdown reports, including after general notes.
+
 ## 0.1.22
 
 - Suggest previously saved assignees and reviewers in review forms while allowing new names.
