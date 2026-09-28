@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.21
+
+- Place the optional task link after the task number in report headers.
+
 ## 0.1.20
 
 - Place the task title and optional task link before the task number in reports.

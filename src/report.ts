@@ -53,7 +53,7 @@ export function reportBlocks(review: Review): Block[] {
         label: label + ':',
         header: true,
       });
-    if (label === t.taskTitle && review.details.taskUrl)
+    if (label === t.taskNumber && review.details.taskUrl)
       blocks.push({
         kind: 'link',
         prefix: t.taskUrl + ': ',

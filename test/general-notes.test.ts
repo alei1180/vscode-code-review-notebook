@@ -141,8 +141,8 @@ test('report localizes severity descriptions and places ranges directly before c
     assert.equal(blocks[index - 1]?.text, 'https://example.org/source');
     const task = blocks.findIndex((b) => b.text === `${t.taskTitle}: Task`);
     assert.equal(task, 1);
-    assert.equal(blocks[task + 1]?.prefix, t.taskUrl + ': ');
-    assert.equal(blocks[task + 2]?.text, `${t.taskNumber}: T1`);
+    assert.equal(blocks[task + 1]?.text, `${t.taskNumber}: T1`);
+    assert.equal(blocks[task + 2]?.prefix, t.taskUrl + ': ');
     assert.equal(blocks[index + 1]?.kind, 'code');
     if (language === 'ru')
       assert.equal(

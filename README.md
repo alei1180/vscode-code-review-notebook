@@ -46,7 +46,7 @@ The compact header includes each severity count and its description in the repor
 
 Reports default to `~/Code Review Note/<task number>/`. If the optional task number is empty, the task title is used instead (sanitized for filenames). Task URL is optional and only appears in reports when filled. Dates use local time in `YYYY/MM/DD HH:mm` format. Code notes show severity below the line numbers, then an optional source link and `Code snapshot:`.
 
-General notes have a severity selector and contribute to severity counts. Notes saved without a severity in 0.1.9 default to Minor. Severity descriptions appear in parentheses. Source links follow the severity inline, before code snapshots; the task URL follows the task title.
+General notes have a severity selector and contribute to severity counts. Notes saved without a severity in 0.1.9 default to Minor. Severity descriptions appear in parentheses. Source links follow the severity inline, before code snapshots; the task URL follows the task number (or the title when no number is provided).
 
 After PDF-only export, **Open report** launches the system viewer; on Windows it passes the native path to Explorer. **Show in Folder** reveals the saved file. Markdown is opened in VS Code; when exporting both formats, Markdown opens first. A viewer launch failure does not undo the export.
 
@@ -74,7 +74,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.20.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.21.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 
