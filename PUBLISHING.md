@@ -11,7 +11,7 @@ Publication is manual and requires the owner's explicit authorization. No CI wor
 3. Run tests, lint, formatting, integration tests and the CI operating-system matrix.
 4. Update the SemVer version and CHANGELOG. Commit the release change using Conventional Commits.
 5. Run `pnpm run package:list` and review the file list for secrets, test data and missing fonts/resources.
-6. Run `pnpm run package`. Install the resulting VSIX into a clean profile and verify creation, note editing, both languages and both export formats.
+6. Run `pnpm run package`. Install the resulting VSIX into a clean profile and verify creation, note editing, both languages and both export formats. Include saved-name suggestions after restart, all context-menu shortcuts, report-folder settings and Open Reports Folder.
 7. Check README links and screenshots against the repository's actual default branch. Assets must be pushed to the public repository before Marketplace can resolve those links.
 8. Verify MIT and third-party license files are included. Review current Marketplace terms as the account owner.
 
@@ -44,6 +44,6 @@ Never commit tokens, paste them into issues or chat, or print them in logs. If f
 
 ## Before the first public release
 
-Consult [the validation record and manual checklist](docs/VALIDATION.md). The final clean-profile walkthrough, platform CI results and minimum-version verification are still pending. Real screenshots are recommended but are not required for VSIX upload.
+Consult [the validation record and manual checklist](docs/VALIDATION.md). Version 0.1.25 passed local automated checks and development-host integration on macOS. A final walkthrough of the installed VSIX, platform CI results, physical keyboard checks and minimum-version verification are still pending. Real screenshots are recommended but are not required for VSIX upload.
 
 The owner must approve publication, push the reviewed commits/assets, and inspect successful Windows/macOS/Linux CI results. Local checks do not establish that the Marketplace has accepted the extension.
