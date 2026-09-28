@@ -9,6 +9,7 @@ export type Field = {
   value: string;
   multiline?: boolean;
   numeric?: boolean;
+  suggestions?: string[];
   readonly?: boolean;
   options?: { value: string; label: Key }[];
 };

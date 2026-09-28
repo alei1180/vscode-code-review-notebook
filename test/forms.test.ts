@@ -126,3 +126,55 @@ test('review number defaults to one and survives a language change', async () =>
     dom.window.close();
   }
 });
+
+test('name suggestions allow free text, preserve localization and render names safely', async () => {
+  const { dom, send, messages } = await setup();
+  try {
+    const name = '<img src=x onerror=alert(1)>';
+    send({
+      type: 'init',
+      readonly: false,
+      fields: [
+        {
+          name: 'assignee',
+          label: 'assignee',
+          value: '',
+          suggestions: ['Иван', name],
+        },
+        {
+          name: 'reviewer',
+          label: 'reviewer',
+          value: 'Анна',
+          suggestions: ['Анна'],
+        },
+      ],
+    });
+    const document = dom.window.document;
+    const input = document.getElementById('assignee') as HTMLInputElement;
+    assert.deepEqual(
+      Array.from(input.list!.options, (option) => option.value),
+      ['Иван', name],
+    );
+    assert.equal(document.querySelectorAll('img').length, 0);
+    input.value = 'Новое имя';
+    input.dispatchEvent(new dom.window.Event('input'));
+    send({ type: 'labels', labels: ru, title: 'start', language: 'ru' });
+    assert.equal(input.value, 'Новое имя');
+    assert.equal(
+      document.querySelector('label[for=assignee]')?.textContent,
+      ru.assignee,
+    );
+    document
+      .getElementById('form')!
+      .dispatchEvent(new dom.window.Event('submit', { cancelable: true }));
+    assert.equal(
+      JSON.stringify(messages.at(-1)),
+      JSON.stringify({
+        type: 'save',
+        values: { assignee: 'Новое имя', reviewer: 'Анна' },
+      }),
+    );
+  } finally {
+    dom.window.close();
+  }
+});

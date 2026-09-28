@@ -17,7 +17,7 @@ Manual code reviews in VS Code. Collect notes beside your code and export a loca
 ## Quick start
 
 1. Open a trusted local project, or a saved local file in a window without a folder, and select **Code Review Notes** in the activity bar.
-2. Choose **Start Code Review**. Enter Task Title, Assignee and Reviewer. Task Number and Task URL are optional. Review Number defaults to 1 and must be a positive integer unique within the task and project. Save the form.
+2. Choose **Start Code Review**. Enter Task Title, Assignee and Reviewer. Task Number and Task URL are optional. Review Number defaults to 1 and must be a positive integer unique within the task and project. Save the form. Assignee and Reviewer offer separate lists of previously saved names, including existing reviews across projects. You can always enter a new name. Names are stored locally and remembered only after saving the form.
 3. Open a saved file, select lines, then use **Code Review Notes: Add Review Note** from the **Code Review Note** editor submenu or Command Palette. The default shortcut is `Ctrl+Alt+R` (`Cmd+Alt+R` on macOS).
 4. Choose the review, enter a comment, severity and optional source URL, and save.
 5. Use a review's context menu to **Complete Review**. Choose Markdown, PDF or both.
@@ -74,7 +74,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.21.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.22.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 

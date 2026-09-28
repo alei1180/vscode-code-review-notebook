@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.22
+
+- Suggest previously saved assignees and reviewers in review forms while allowing new names.
+- Keep separate local name histories across projects and seed them from existing reviews.
+
 ## 0.1.21
 
 - Place the optional task link after the task number in report headers.

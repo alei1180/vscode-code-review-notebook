@@ -74,6 +74,9 @@ export const databaseSchema = z.object({
   version: z.literal(1),
   reviews: z.array(reviewSchema),
   active: z.string().uuid().nullable(),
+  people: z
+    .object({ assignee: z.array(text), reviewer: z.array(text) })
+    .optional(),
 });
 export type Database = z.infer<typeof databaseSchema>;
 export function validUrl(value: string): boolean {

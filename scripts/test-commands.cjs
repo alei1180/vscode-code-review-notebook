@@ -236,13 +236,31 @@ async function main() {
     console.log(
       'Bundled general note creation with and without a file passed.',
     );
+    const until = async (condition) => {
+      const deadline = Date.now() + 3000;
+      while (!condition()) {
+        assert.ok(Date.now() < deadline, 'Timed out waiting for form');
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+    };
     messages = [];
+    const beforeStart = panelCount;
     await handlers.get('codeReviewNotes.start')();
+    await until(() => panelCount === beforeStart + 1);
     await receive({ type: 'ready' });
     assert.ok(
       messages
         .find((m) => m.type === 'init')
         .fields.some((f) => f.name === 'taskUrl'),
+    );
+    const peopleFields = messages.find((m) => m.type === 'init').fields;
+    assert.deepEqual(
+      peopleFields.find((f) => f.name === 'assignee').suggestions,
+      ['A'],
+    );
+    assert.deepEqual(
+      peopleFields.find((f) => f.name === 'reviewer').suggestions,
+      ['R'],
     );
     await receive({
       type: 'save',
@@ -262,15 +280,12 @@ async function main() {
     const newReview = JSON.parse(
       await fs.readFile(databaseFile, 'utf8'),
     ).reviews.at(-1);
+    assert.deepEqual(
+      JSON.parse(await fs.readFile(databaseFile, 'utf8')).people,
+      { assignee: ['A'], reviewer: ['R'] },
+    );
     assert.equal(newReview.details.taskNumber, '');
     assert.equal(newReview.details.taskUrl, 'https://example.org/task');
-    const until = async (condition) => {
-      const deadline = Date.now() + 3000;
-      while (!condition()) {
-        assert.ok(Date.now() < deadline, 'Timed out waiting for form');
-        await new Promise((resolve) => setTimeout(resolve, 10));
-      }
-    };
     for (const command of ['add', 'addGeneral']) {
       for (const cancelStart of [false, true]) {
         await fs.writeFile(

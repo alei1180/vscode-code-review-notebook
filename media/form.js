@@ -69,6 +69,17 @@
           translate();
         });
         group.append(input);
+        if (field.suggestions && input.tagName === 'INPUT' && !input.readOnly) {
+          const list = document.createElement('datalist');
+          list.id = field.name + '-suggestions';
+          input.setAttribute('list', list.id);
+          for (const name of field.suggestions) {
+            const option = document.createElement('option');
+            option.value = name;
+            list.append(option);
+          }
+          group.append(list);
+        }
         const error = document.createElement('p');
         error.className = 'field-error';
         error.id = field.name + '-error';

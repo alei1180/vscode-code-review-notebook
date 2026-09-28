@@ -19,6 +19,7 @@ import {
   type Note,
 } from './model';
 import { Store, isCode } from './storage';
+import { peopleSuggestions, rememberPeople } from './people';
 import { openReport } from './open-report';
 import { strings, type Key } from './i18n';
 import { form, FieldError, type Field } from './forms';
@@ -261,12 +262,16 @@ class Controller implements vscode.Disposable {
     copy?: Review,
   ): Promise<Review | undefined> {
     if (existing) this.mutable(existing);
+    const people = peopleSuggestions(await this.store.read());
     const fields: Field[] = (
       ['taskTitle', 'taskNumber', 'taskUrl', 'assignee', 'reviewer'] as const
     ).map((name) => ({
       name,
       label: name,
       value: (existing ?? copy)?.details[name] ?? '',
+      ...(name === 'assignee' || name === 'reviewer'
+        ? { suggestions: people[name] }
+        : {}),
     }));
     fields.push({
       name: 'reviewNumber',
@@ -318,9 +323,11 @@ class Controller implements vscode.Disposable {
             const r = this.current(db.reviews, existing.id);
             this.mutable(r);
             if (JSON.stringify(r) !== snapshot) throw new UserError('stale');
+            rememberPeople(db, parsed.data);
             r.details = parsed.data;
             savedReview = r;
           } else {
+            rememberPeople(db, parsed.data);
             const r = createReview(project, parsed.data);
             db.reviews.push(r);
             db.active = r.id;
