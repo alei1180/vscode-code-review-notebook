@@ -1,41 +1,43 @@
-# Validation record — 2026-09-19
+# Validation record — updated 2026-09-28
 
-## Completed locally
+Current package: **0.1.19**. Dates below refer to recorded checks, not a claim that every check was repeated on this document's update date.
 
-Environment: macOS arm64, Node.js 24.19.0, VS Code 1.138.0.
+## Completed checks
 
-- 13 automated tests pass: line selections, input ranges, safe filenames including Unicode, task numbering, storage reopen/corruption, concurrent writers, translation parity, form language changes without lost input, form validation, Markdown escaping, two-format export, retry/conflict behavior and native Brotli decoding.
-- Standalone bundled PDF and Markdown generation passes. This guards against differences between source modules and the distributed CommonJS bundle.
-- TypeScript strict compilation, ESLint, Prettier and whitespace checks pass.
-- VSIX packaged successfully and installed into an isolated extensions directory.
-- Integration checks using the installed package pass: activation, registered commands, opening a form and live English/Russian title switching.
-- A four-page Cyrillic report was rendered and visually inspected: text, long code lines and links fit the pages.
-- Production dependency audit reports zero known advisories at the time of the check. This is not a guarantee of absence of vulnerabilities.
+- On macOS, the 0.1.17 code passed 24 Node tests, bundled PDF/Markdown export checks, bundled command regression checks and report-opening tests. Versions 0.1.18 and 0.1.19 changed branding only; each passed compilation, packaging and verification of the PNG included in the VSIX.
+- Coverage includes localization and draft preservation, review numbering, optional task URLs, general-note severity, immutable ranges, storage validation/locking, export conflicts, syntax highlighting and PDF page numbering.
+- Bundled command checks cover creating a review before adding a note, cancellation, folderless windows, selecting a diff side and capturing Git text. They replace the VS Code UI boundary and are not Windows UI tests.
+- Report-opening tests simulate Windows paths with Cyrillic, spaces and special characters, missing files and launcher failures. They do not launch Windows Explorer on Windows.
+- Strict TypeScript, ESLint and Prettier checks passed for 0.1.17. Its SQM-style PDF was rendered and visually checked with a one-page example and a four-page stress report.
+- The 0.1.19 VSIX includes the entry point, translations, PNG logo, theme-aware SVG, fonts and license texts. Test data and build sources are excluded.
+- Publisher access was observed in Marketplace with the Owner role. Publisher ID remains `alei1180`; the display name was saved as Alexander Osadchy. Extension publication and Marketplace acceptance have not been recorded.
+- The user tested Windows comparisons and PDF export. Reported failures led to folderless support in 0.1.15 and native PDF opening in 0.1.16. Successful Windows retesting of the latter has not been recorded.
 
-## Not completed in this environment
+## Historical checks
 
-- Full manual editor-to-report walkthrough and Marketplace screenshots. Native UI automation could observe the development host but could not reliably target its input among running VS Code instances. No simulated screenshots are presented as screenshots of the working extension.
-- Windows and Linux execution. A CI matrix is configured but has not been run remotely because commits have not been pushed.
-- Minimum supported VS Code 1.96 execution; local integration used 1.138. The manifest uses stable APIs and the bundle targets Node 20 syntax.
-- Publisher ownership, Marketplace upload/acceptance and public asset link availability.
+Earlier packages passed installed-extension integration on macOS with VS Code 1.138.0 and Node.js 24.19.0: activation, registered commands, opening a form and live language switching. This is not a fresh integration result for 0.1.19.
 
-Before publishing, run the manual checklist below and the CI matrix. Do not describe these unchecked items as verified.
+A previous production dependency audit reported no known advisories at the time. It is not a current security assessment.
 
-## Manual release checklist
+## Pending release checks
 
-1. Install the VSIX into a clean VS Code profile and open a trusted local sample project.
-2. Create two reviews for the same task; confirm all four required fields.
-3. Add a note to a single line and another to a range ending at column zero of the following line.
-4. Enter text in a form, change the extension language and confirm the values remain intact.
-5. Edit and delete a note; open a saved note after removing its original file.
-6. Restart VS Code and verify drafts and comments remain available.
-7. Complete a review in both formats, re-export it, then complete the next review and check numbering.
-8. Verify empty reviews, filename conflicts, unavailable output folders and export retries.
-9. Inspect long Cyrillic text, code and source links in PDF; test light/dark/high-contrast themes and keyboard navigation.
-10. Capture screenshots of creation, note editing and the review tree using only demonstration data, add them to README, then push the reviewed assets before publication.
+- Inspect successful Windows/macOS/Linux CI results for the final commit; configuring a matrix does not establish that it has passed.
+- Test the declared minimum VS Code 1.96, or raise it to a verified version.
+- Perform the final clean-profile walkthrough below, including native PDF opening on Windows.
+- Check public repository links and Marketplace name availability. Real demonstration screenshots are recommended but not an upload requirement.
+- Upload only with owner authorization, then verify Marketplace acceptance and installation.
 
-## Version 0.1.1 changes
+## Manual checklist
 
-17 automated tests cover the original behavior plus editable module labels, immutable source coordinates and code, submenu grouping, legacy notes and syntax tokens for TypeScript and 1C/BSL. Bundled export includes a highlighted snippet. A four-page report with Cyrillic, tabs, long lines and a multi-page BSL snippet was visually checked. Native UI interaction remains outside the automated integration checks.
-
-The 0.1.1 VSIX was installed in the isolated profile and passed the activation, commands, form and live language-switch integration checks on macOS. Production dependency audit reported zero known advisories.
+1. Install the final VSIX in a clean profile. Test both a trusted workspace and a window with only saved files.
+2. Create a review with Task Title, Assignee and Reviewer. Test optional Task Number/Task URL and Review Number (default 1), including duplicate-number rejection within a task/project.
+3. Add code and general notes without an existing review. Test saving and cancelling the start form.
+4. Capture one line and a selection ending at column zero of the next line. Test both sides of a local comparison and Git snapshots through the Command Palette.
+5. Rename Module; verify the original path, range and snapshot remain unchanged. Test general notes with/without a file, all severities and optional source links.
+6. Change the extension language during entry; verify values remain. Check static commands separately using VS Code's display language.
+7. Edit/delete notes, inspect a snapshot after removing its source, restart VS Code and verify persistence.
+8. Export Markdown, PDF and both. Verify the home-directory task folder, optional task URL, local dates, severity counts/descriptions and page numbers.
+9. Test Open report and Show in Folder for PDF, including paths with Cyrillic and spaces. A viewer failure must not lose the export.
+10. Test empty reviews, re-export, conflicting filenames, unavailable output directories and retry after interrupted export.
+11. Inspect long Cyrillic text, links and code. Check light/dark/high-contrast themes and keyboard navigation.
+12. Use demonstration data only when capturing screenshots for the listing.

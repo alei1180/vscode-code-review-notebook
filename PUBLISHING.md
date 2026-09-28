@@ -1,6 +1,6 @@
 # Publishing
 
-Publisher ID: `alei1180` (provided by the owner). Extension ID: `alei1180.vscode-code-review-notes`.
+Publisher ID: `alei1180`. Display name: **Alexander Osadchy** (saved and verified in the publisher management UI). Extension ID: `alei1180.vscode-code-review-notes`.
 
 Publication is manual and requires the owner's explicit authorization. No CI workflow publishes or pushes changes.
 
@@ -15,14 +15,24 @@ Publication is manual and requires the owner's explicit authorization. No CI wor
 7. Check README links and screenshots against the repository's actual default branch. Assets must be pushed to the public repository before Marketplace can resolve those links.
 8. Verify MIT and third-party license files are included. Review current Marketplace terms as the account owner.
 
+## GitHub and package contents
+
+The source repository can be public before Marketplace publication. A public repository is not required for VSIX upload, but users must be able to access the source, support and image links advertised in the listing. Review tracked files and history before changing visibility: author names/emails and Actions logs can become public.
+
+After reviewing local commits, run `git push origin main` and inspect Actions results. A matching release tag is optional. Do not commit VSIX files or node_modules; a VSIX can be attached to a GitHub Release. Packaging does not push changes.
+
+The manifest's `private: true` prevents accidental npm publication; it does not block Marketplace publication. The PNG is the Marketplace icon; the SVG is used by the Activity Bar. Runtime code, fonts and license texts must be included in the VSIX. Build tooling requires Node 24; the extension itself runs inside VS Code's extension host.
+
 ## First publication
 
-Sign into https://marketplace.visualstudio.com/manage/publishers/ with an account authorized for `alei1180`. Choose the VS Code extension upload flow and upload the reviewed VSIX. Check the listing before completing publication. Publisher ownership was not verified automatically during development.
+Sign into https://marketplace.visualstudio.com/manage/publishers/ with an account authorized for `alei1180`. Choose **New extension → Visual Studio Code**, upload the reviewed VSIX and complete the publishing flow. Manual browser upload does not require a CLI PAT. Check the listing before completing publication. Publisher access has been checked; final name availability and Marketplace acceptance still need verification at upload.
 
 Official instructions:
 
 - https://code.visualstudio.com/api/working-with-extensions/publishing-extension
 - https://code.visualstudio.com/api/references/extension-manifest
+
+After acceptance, inspect the listing and install from Marketplace in a clean profile. Check the publisher name, icon, README links and review/export workflow.
 
 For later releases, increase the version, repeat validation and upload the new VSIX. Do not delete and recreate the listing as an update mechanism.
 
@@ -34,6 +44,6 @@ Never commit tokens, paste them into issues or chat, or print them in logs. If f
 
 ## Before the first public release
 
-Consult [the validation record and manual checklist](docs/VALIDATION.md). Marketplace screenshots and the full manual walkthrough are still pending.
+Consult [the validation record and manual checklist](docs/VALIDATION.md). The final clean-profile walkthrough, platform CI results and minimum-version verification are still pending. Real screenshots are recommended but are not required for VSIX upload.
 
-The owner must confirm publisher access, approve publication, push the reviewed commits/assets, and inspect successful Windows/macOS/Linux CI results. Local checks do not establish that the Marketplace has accepted the extension.
+The owner must approve publication, push the reviewed commits/assets, and inspect successful Windows/macOS/Linux CI results. Local checks do not establish that the Marketplace has accepted the extension.
