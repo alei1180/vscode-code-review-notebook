@@ -1,6 +1,10 @@
-# Validation record — updated 2026-09-28
+# Validation record — updated 2026-10-02
 
-Current package: **0.1.25**. The results below distinguish local automated checks, visual checks and tests still pending on other platforms.
+Current package: **0.1.26** (README demo and documentation update; extension behavior unchanged). The results below distinguish local automated checks, visual checks and tests still pending on other platforms.
+
+## README demo — 2026-10-02
+
+The walkthrough uses actual VS Code development-host screenshots from an isolated profile and a PDF exported by the extension. All task, person and code data are fictional. Creation, note saving and Markdown + PDF export were performed through the UI. The completion shortcut was exercised in the review tree. The GIF is an edited sequence of captured states with short transitions, not a continuous screen recording. All nine scenes were inspected; the final 1280 × 900 GIF has 33 frames, lasts 27.12 seconds and loops. See [capture and rebuild instructions](DEMO.md).
 
 ## Completed checks for 0.1.25 — 2026-09-28
 

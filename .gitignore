@@ -10,3 +10,7 @@ coverage/
 .DS_Store
 work/
 dist/
+
+.ruff_cache/
+__pycache__/
+*.pyc

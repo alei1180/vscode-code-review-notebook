@@ -4,6 +4,12 @@ Manual code reviews in VS Code. Collect notes beside your code and export a loca
 
 [Русская версия](README.ru.md)
 
+## See it in action
+
+![Code Review Notes walkthrough: create a review, select a line, add a note and export a report](media/demo/walkthrough.gif)
+
+A 27-second walkthrough of the real extension with sample data and the English interface. Create a review, capture a code note, choose its severity and export Markdown + PDF. [Static preview](media/demo/preview.png).
+
 ## Features
 
 - Multiple reviews with task title, optional task number/link, assignee and reviewer.
@@ -104,7 +110,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.25.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.26.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 
@@ -124,6 +130,8 @@ pnpm run package
 Press F5 to start the Extension Development Host. `test:integration` downloads official VS Code by default; set `VSCODE_EXECUTABLE` to use an installed executable. Dependencies are bundled into the extension; `--no-dependencies` excludes redundant `node_modules` from VSIX packaging.
 
 See [validation record](docs/VALIDATION.md), [architecture](docs/ARCHITECTURE.md), [publishing](PUBLISHING.md), [support](SUPPORT.md), [changes](CHANGELOG.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
+
+The README demo can be refreshed using the [capture and rebuild instructions](docs/DEMO.md).
 
 ## License
 

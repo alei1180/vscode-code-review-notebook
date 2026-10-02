@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.26
+
+- Add a GIF walkthrough and static preview to both READMEs, showing real review creation, a code note and report export.
+
 ## 0.1.25
 
 - Add scoped keyboard chords for all extension context-menu commands using a shared review prefix.

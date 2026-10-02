@@ -16,3 +16,7 @@ scripts/**
 node_modules/**
 pnpm-lock.yaml
 pnpm-workspace.yaml
+
+.ruff_cache/**
+**/__pycache__/**
+**/*.pyc
