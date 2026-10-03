@@ -20,7 +20,7 @@ scenes = [
     (
         "01-start.png",
         "Start with your code",
-        "Open Code Review Notes and start a review.",
+        "Open Code Review Notebook and start a review.",
         0,
         None,
         2400,
@@ -103,7 +103,7 @@ def compose(scene):
             fill=(int(12 + 8 * t), int(22 + 13 * t), int(29 + 15 * t)),
         )
     draw.rounded_rectangle((38, 29, 49, 40), 5, fill=accent)
-    draw.text((61, 24), "CODE REVIEW NOTES", font=small, fill=accent)
+    draw.text((61, 24), "CODE REVIEW NOTEBOOK", font=small, fill=accent)
     draw.text((38, 52), title, font=large, fill="#f2f7f5")
     draw.text((39, 99), subtitle, font=regular, fill="#a9bbb7")
     image = Image.open(

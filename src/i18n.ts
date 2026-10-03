@@ -1,6 +1,6 @@
 import type { Language } from './model';
 export const en = {
-  title: 'Code Review Notes',
+  title: 'Code Review Notebook',
   start: 'Start Code Review',
   add: 'Add Review Note',
   complete: 'Complete Review',
@@ -42,7 +42,7 @@ export const en = {
   rangeError: 'Enter an existing line or range, for example 2–16.',
   urlError: 'Enter an HTTP or HTTPS URL.',
   error:
-    'The operation could not be completed. Your saved data has been preserved. See Code Review Notes output.',
+    'The operation could not be completed. Your saved data has been preserved. See Code Review Notebook output.',
   noEditor: 'Select a line on the side of the comparison you want to review.',
   saveFile: 'Save the file before adding a review note.',
   unsupportedSource:
@@ -84,7 +84,7 @@ export const en = {
 } as const;
 export type Key = keyof typeof en;
 export const ru: Record<Key, string> = {
-  title: 'Code Review Notes',
+  title: 'Code Review Notebook',
   start: 'Начать ревью',
   add: 'Добавить замечание',
   complete: 'Завершить ревью',
@@ -126,7 +126,7 @@ export const ru: Record<Key, string> = {
   rangeError: 'Укажите существующую строку или диапазон, например 2–16.',
   urlError: 'Укажите ссылку HTTP или HTTPS.',
   error:
-    'Не удалось завершить операцию. Сохранённые данные не потеряны. Подробности — в канале Code Review Notes.',
+    'Не удалось завершить операцию. Сохранённые данные не потеряны. Подробности — в канале Code Review Notebook.',
   noEditor:
     'Выберите строку на той стороне сравнения, к которой хотите добавить замечание.',
   saveFile: 'Сохраните файл перед добавлением замечания.',

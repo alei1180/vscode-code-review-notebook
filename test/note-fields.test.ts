@@ -40,7 +40,7 @@ test('old notes remain readable and module edits never move source or lines', ()
   assert.equal(strings('ru').file, 'Модуль');
   assert.equal(strings('en').file, 'Module');
 });
-test('context commands are nested under Code Review Note', async () => {
+test('context commands are nested under Code Review Notebook', async () => {
   const manifest = JSON.parse(await readFile('package.json', 'utf8'));
   for (const menu of [
     'codeReviewNotes.editorMenu',
@@ -63,7 +63,7 @@ test('context commands are nested under Code Review Note', async () => {
         manifest.contributes.submenus.find(
           (s: { id: string; label: string }) => s.id === item.submenu,
         )?.label,
-        'Code Review Note',
+        'Code Review Notebook',
       );
     }
   }

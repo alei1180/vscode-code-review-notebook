@@ -2,6 +2,8 @@
 
 `media/demo/walkthrough.gif` is a 27-second, looping walkthrough captured from the real extension in a separate VS Code development profile. Both READMEs use the same English-language demo. `media/demo/preview.png` provides a static alternative.
 
+The captures were recorded with version 0.1.26, before the rename to Code Review Notebook; the panel title in those captures still reflects that version. The surrounding captions use the current name.
+
 The animation uses selected screenshots, cropped close-ups, short crossfades and step captions. The last scene is a rendering of the PDF actually exported during the walkthrough. It does not simulate forms or change the extension UI. Recordly was considered as an optional recorder; this version was assembled from native window captures with Pillow, without installing Recordly.
 
 ## Capture scenario

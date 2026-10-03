@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.27
+
+- Rename the extension to Code Review Notebook across the interface and documentation.
+- Update GitHub project and support links to vscode-code-review-notebook.
+- Preserve the extension ID, settings and existing report directory for compatibility.
+
 ## 0.1.26
 
 - Add a GIF walkthrough and static preview to both READMEs, showing real review creation, a code note and report export.

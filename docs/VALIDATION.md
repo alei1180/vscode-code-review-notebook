@@ -1,6 +1,10 @@
-# Validation record — updated 2026-10-02
+# Validation record — updated 2026-10-03
 
-Current package: **0.1.26** (README demo and documentation update; extension behavior unchanged). The results below distinguish local automated checks, visual checks and tests still pending on other platforms.
+Current package: **0.1.27** (Code Review Notebook branding and GitHub links; extension ID and storage unchanged). The results below distinguish local automated checks, visual checks and tests still pending on other platforms.
+
+## Branding update — 2026-10-03
+
+All 27 Node tests and bundled export, command and report-opening checks passed, as did ESLint. The display name, command categories, panel and form titles, output channel and both READMEs use Code Review Notebook. Repository links point to `alei1180/vscode-code-review-notebook`. The package name, command/settings identifiers and default report folder remain unchanged for compatibility. Demo captions were rebuilt; embedded captures still show the 0.1.26 interface (see DEMO.md).
 
 ## README demo — 2026-10-02
 

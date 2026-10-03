@@ -1,8 +1,8 @@
 {
   "name": "vscode-code-review-notes",
-  "displayName": "Code Review Notes",
+  "displayName": "Code Review Notebook",
   "description": "Manual code reviews with local notes and Markdown or PDF reports.",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "private": true,
   "engines": {
     "vscode": "^1.96.0",
@@ -12,12 +12,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alei1180/vscode-code-review-notes.git"
+    "url": "https://github.com/alei1180/vscode-code-review-notebook.git"
   },
   "bugs": {
-    "url": "https://github.com/alei1180/vscode-code-review-notes/issues"
+    "url": "https://github.com/alei1180/vscode-code-review-notebook/issues"
   },
-  "homepage": "https://github.com/alei1180/vscode-code-review-notes#readme",
+  "homepage": "https://github.com/alei1180/vscode-code-review-notebook#readme",
   "categories": [
     "Other"
   ],
@@ -82,79 +82,79 @@
       {
         "command": "codeReviewNotes.start",
         "title": "%command.start%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(add)"
       },
       {
         "command": "codeReviewNotes.add",
         "title": "%command.add%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(comment-add)"
       },
       {
         "command": "codeReviewNotes.complete",
         "title": "%command.complete%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(check)"
       },
       {
         "command": "codeReviewNotes.select",
         "title": "%command.select%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(check)"
       },
       {
         "command": "codeReviewNotes.editReview",
         "title": "%command.editReview%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(edit)"
       },
       {
         "command": "codeReviewNotes.copy",
         "title": "%command.copy%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(copy)"
       },
       {
         "command": "codeReviewNotes.export",
         "title": "%command.export%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(export)"
       },
       {
         "command": "codeReviewNotes.openNote",
         "title": "%command.openNote%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(go-to-file)"
       },
       {
         "command": "codeReviewNotes.viewNote",
         "title": "%command.viewNote%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(preview)"
       },
       {
         "command": "codeReviewNotes.editNote",
         "title": "%command.editNote%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(edit)"
       },
       {
         "command": "codeReviewNotes.deleteNote",
         "title": "%command.deleteNote%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(trash)"
       },
       {
         "command": "codeReviewNotes.addGeneral",
         "title": "%command.addGeneral%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(comment)"
       },
       {
         "command": "codeReviewNotes.openReportDirectory",
         "title": "%command.openReportDirectory%",
-        "category": "Code Review Notes",
+        "category": "Code Review Notebook",
         "icon": "$(folder-opened)"
       }
     ],
@@ -162,7 +162,7 @@
       "activitybar": [
         {
           "id": "codeReviewNotes",
-          "title": "Code Review Notes",
+          "title": "Code Review Notebook",
           "icon": "media/activity.svg"
         }
       ]
@@ -304,7 +304,7 @@
       }
     ],
     "configuration": {
-      "title": "Code Review Notes",
+      "title": "Code Review Notebook",
       "properties": {
         "codeReviewNotes.language": {
           "type": "string",
@@ -462,11 +462,11 @@
     "submenus": [
       {
         "id": "codeReviewNotes.editorMenu",
-        "label": "Code Review Note"
+        "label": "Code Review Notebook"
       },
       {
         "id": "codeReviewNotes.itemMenu",
-        "label": "Code Review Note"
+        "label": "Code Review Notebook"
       }
     ]
   },

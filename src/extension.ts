@@ -56,8 +56,9 @@ export function activate(context: vscode.ExtensionContext): void {
 class Controller implements vscode.Disposable {
   private readonly store: Store;
   private readonly tree = new ReviewTree(language);
-  private readonly output =
-    vscode.window.createOutputChannel('Code Review Notes');
+  private readonly output = vscode.window.createOutputChannel(
+    'Code Review Notebook',
+  );
   private readonly disposables: vscode.Disposable[] = [];
   private busy = false;
   constructor(private readonly context: vscode.ExtensionContext) {

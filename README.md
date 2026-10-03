@@ -1,4 +1,4 @@
-# Code Review Notes
+# Code Review Notebook
 
 Manual code reviews in VS Code. Collect notes beside your code and export a local Markdown or PDF report.
 
@@ -6,7 +6,7 @@ Manual code reviews in VS Code. Collect notes beside your code and export a loca
 
 ## See it in action
 
-![Code Review Notes walkthrough: create a review, select a line, add a note and export a report](media/demo/walkthrough.gif)
+![Code Review Notebook walkthrough: create a review, select a line, add a note and export a report](media/demo/walkthrough.gif)
 
 A 27-second walkthrough of the real extension with sample data and the English interface. Create a review, capture a code note, choose its severity and export Markdown + PDF. [Static preview](media/demo/preview.png).
 
@@ -24,9 +24,9 @@ A 27-second walkthrough of the real extension with sample data and the English i
 
 ## Quick start
 
-1. Open a trusted local project, or a saved local file in a window without a folder, and select **Code Review Notes** in the activity bar.
+1. Open a trusted local project, or a saved local file in a window without a folder, and select **Code Review Notebook** in the activity bar.
 2. Choose **Start Code Review**. Enter Task Title, Assignee and Reviewer. Task Number and Task URL are optional. Review Number defaults to 1 and must be a positive integer unique within the task and project. Save the form.
-3. Open a saved file, select lines, then use **Code Review Notes: Add Review Note** from the **Code Review Note** editor submenu or Command Palette. The default shortcut is `Ctrl+Alt+Shift+R`, then `N` (`Cmd+Alt+Shift+R`, then `N` on macOS).
+3. Open a saved file, select lines, then use **Code Review Notebook: Add Review Note** from the **Code Review Notebook** editor submenu or Command Palette. The default shortcut is `Ctrl+Alt+Shift+R`, then `N` (`Cmd+Alt+Shift+R`, then `N` on macOS).
 4. Choose the review, enter a comment, severity and optional source URL, and save.
 5. Use a review's context menu to **Complete Review**. Choose Markdown, PDF or both.
 
@@ -72,7 +72,7 @@ The **Module** field is editable and initially contains the source path. Renamin
 
 PDF reports use an A4 adaptation of the SQM lecture-notes light style: a green title banner, orange item headings, blue links and page numbers. They use embedded Computer Modern Unicode Sans with Cyrillic support; code snapshots retain the FreeMono monospace font. The report title, item headings and field labels are bold; field values use regular text; code keeps offline syntax highlighting. The language is captured from VS Code; older notes use the original file extension. Unknown languages and snippets over 100,000 characters are rendered as plain code. Existing exported files are not overwritten: after an update changes report formatting, choose a different output folder to regenerate an old report.
 
-Use **Code Review Notes: Add General Note** for observations without code lines. Choose **Without a file** or **Attach to a file…** within the review project. The optional name appears in the report; general notes have no line range or code snapshot. The command is available in the Command Palette, review panel toolbar and Code Review Note context menus.
+Use **Code Review Notebook: Add General Note** for observations without code lines. Choose **Without a file** or **Attach to a file…** within the review project. The optional name appears in the report; general notes have no line range or code snapshot. The command is available in the Command Palette, review panel toolbar and Code Review Notebook context menus.
 
 The compact header includes each severity count and its description in the report language. Numbered note headings contain the chosen name or file path without a Module prefix or line numbers. A blank line before and after each heading separates notes in Markdown and PDF.
 
@@ -84,7 +84,7 @@ General notes have a severity selector and contribute to severity counts. Notes 
 
 After PDF-only export, **Open report** launches the system viewer; on Windows it passes the native path to Explorer. **Show in Folder** reveals the saved file. Markdown is opened in VS Code; when exporting both formats, Markdown opens first. A viewer launch failure does not undo the export.
 
-The last item in the Code Review Note context menu, **Open Reports Folder**, opens the configured report root in your system file manager. The folder is created if needed.
+The last item in the Code Review Notebook context menu, **Open Reports Folder**, opens the configured report root in your system file manager. The folder is created if needed.
 
 ## Settings
 
@@ -110,7 +110,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.26.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.27.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 
