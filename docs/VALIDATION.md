@@ -1,6 +1,6 @@
 # Validation record — updated 2026-10-03
 
-Current package: **0.1.28** (package ID renamed to `alei1180.vscode-code-review-notebook`; manual data transfer is documented in both READMEs). The results below distinguish local automated checks, visual checks and tests still pending on other platforms.
+Current package: **0.1.29** (Marketplace installation documentation and CI fixes; extension runtime behavior unchanged). The results below distinguish local automated checks, visual checks and tests still pending on other platforms.
 
 ## Windows report-path test fix — 2026-10-03
 

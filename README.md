@@ -116,7 +116,7 @@ code --install-extension alei1180.vscode-code-review-notebook
 
 ### Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notebook-0.1.28.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notebook-0.1.29.vsix`.
 
 Updates are published to Marketplace manually; the repository does not publish automatically.
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.29
+
+- Add Marketplace installation links and instructions to both READMEs.
+- Remove the walkthrough description paragraphs while retaining the GIF.
+- Fix cross-platform CI line endings, integration profile paths and Windows report-path test fixtures.
+
 ## 0.1.28
 
 - Rename the package to vscode-code-review-notebook and update extension ID references.
