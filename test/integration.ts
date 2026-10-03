@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import assert from 'node:assert/strict';
 export async function run(): Promise<void> {
   const extension = vscode.extensions.getExtension(
-    'alei1180.vscode-code-review-notes',
+    'alei1180.vscode-code-review-notebook',
   );
   assert.ok(extension, 'Extension must be discovered');
   await extension.activate();

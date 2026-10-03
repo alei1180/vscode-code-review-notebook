@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.28
+
+- Rename the package to vscode-code-review-notebook and update extension ID references.
+- Document transferring local review data from the previous extension ID.
+
 ## 0.1.27
 
 - Rename the extension to Code Review Notebook across the interface and documentation.

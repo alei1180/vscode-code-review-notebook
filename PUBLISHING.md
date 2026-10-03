@@ -1,6 +1,6 @@
 # Publishing
 
-Publisher ID: `alei1180`. Display name: **Alexander Osadchy** (saved and verified in the publisher management UI). Extension ID: `alei1180.vscode-code-review-notes`.
+Publisher ID: `alei1180`. Display name: **Alexander Osadchy** (saved and verified in the publisher management UI). Extension ID: `alei1180.vscode-code-review-notebook`.
 
 Publication is manual and requires the owner's explicit authorization. No CI workflow publishes or pushes changes.
 

@@ -58,7 +58,7 @@ Press `Ctrl+Alt+Shift+R` (`Cmd+Alt+Shift+R` on macOS), release the keys, then pr
 | `E`        | Edit Note                            | Review tree                    |
 | `Delete`   | Delete Note                          | Review tree, with confirmation |
 
-Select the relevant review for review actions or the relevant note for note actions before using tree shortcuts. On Mac keyboards without a forward Delete key, use `Fn+Backspace` for `Delete`. Editor shortcuts require a local file; completion and export show the review picker. Shortcuts are inactive in terminals, form inputs and other views. User bindings or other extensions can assign the same keys; customize them in Keyboard Shortcuts using `@ext:alei1180.vscode-code-review-notes`.
+Select the relevant review for review actions or the relevant note for note actions before using tree shortcuts. On Mac keyboards without a forward Delete key, use `Fn+Backspace` for `Delete`. Editor shortcuts require a local file; completion and export show the review picker. Shortcuts are inactive in terminals, form inputs and other views. User bindings or other extensions can assign the same keys; customize them in Keyboard Shortcuts using `@ext:alei1180.vscode-code-review-notebook`.
 
 ## File comparisons
 
@@ -110,7 +110,7 @@ An interrupted export retains its number and temporarily prevents editing; retry
 
 ## Install from VSIX
 
-Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notes-0.1.27.vsix`.
+Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notebook-0.1.28.vsix`.
 
 Marketplace publication is planned. The repository does not publish automatically.
 
@@ -136,3 +136,11 @@ The README demo can be refreshed using the [capture and rebuild instructions](do
 ## License
 
 MIT — Copyright 2026 Alexander Osadchy.
+
+## Moving from the previous extension ID
+
+The extension ID is now `alei1180.vscode-code-review-notebook`. VS Code treats it as a separate extension. Disable the previous `alei1180.vscode-code-review-notes` extension before using the new one to avoid duplicate commands.
+
+To retain reviews and saved people, close VS Code and back up the previous extension's `reviews.json` in your active profile's `globalStorage/alei1180.vscode-code-review-notes` directory. Copy it into `globalStorage/alei1180.vscode-code-review-notebook` before creating reviews with the new extension. Do not overwrite an existing destination database; the files are not automatically merged. Keep the backup until the reviews appear in the new extension.
+
+The `codeReviewNotes.*` settings and commands, and the configured report directory, remain unchanged. Exported reports do not need to be moved.
