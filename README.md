@@ -8,8 +8,6 @@ Manual code reviews in VS Code. Collect notes beside your code and export a loca
 
 ![Code Review Notebook walkthrough: create a review, select a line, add a note and export a report](media/demo/walkthrough.gif)
 
-A 27-second walkthrough of the real extension with sample data and the English interface. Create a review, capture a code note, choose its severity and export Markdown + PDF. [Static preview](media/demo/preview.png).
-
 ## Features
 
 - Multiple reviews with task title, optional task number/link, assignee and reviewer.
