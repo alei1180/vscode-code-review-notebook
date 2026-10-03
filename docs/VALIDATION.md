@@ -2,6 +2,12 @@
 
 Current package: **0.1.28** (package ID renamed to `alei1180.vscode-code-review-notebook`; manual data transfer is documented in both READMEs). The results below distinguish local automated checks, visual checks and tests still pending on other platforms.
 
+## Windows report-path test fix — 2026-10-03
+
+Run `37097758727` passed all Ubuntu and macOS jobs. Windows passed formatting and lint, then exposed a test fixture issue: `/profile` resolved to `D:\profile` in the implementation while the expected value built with `join()` omitted the drive. The test now uses a native absolute profile path and also checks an absolute custom report directory. Production report code is unchanged.
+
+All 27 Node tests, bundled regressions, ESLint and Prettier passed locally. An additional local check ran the actual report-directory function with `node:path.win32` for default, relative, other-drive absolute and sanitized task paths. This does not replace a hosted Windows run; the next Actions run must confirm the remaining Windows steps.
+
 ## CI portability fix — 2026-10-03
 
 Run `37097431074` passed Ubuntu but failed Windows formatting (52 files checked out with CRLF) and macOS integration startup (the VS Code IPC socket exceeded the 103-byte path limit). `.gitattributes` now keeps text files in LF while preserving binary assets. Integration tests use a unique temporary profile, with a short `/tmp` path on macOS, and remove that profile when the run finishes.

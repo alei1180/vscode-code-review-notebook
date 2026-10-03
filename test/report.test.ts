@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { createReview, reserveReport } from '../src/model';
 import {
   pdf,
@@ -94,16 +94,22 @@ test('native Brotli adapter returns font bytes losslessly', async () => {
 test('task links are optional and dates and report folders follow user settings', async () => {
   const { reportDate, reportDirectory } = await import('../src/report.js');
   const { detailsSchema, taskKey } = await import('../src/model.js');
+  const profile = resolve(tmpdir(), 'crn-test-profile');
+  const absoluteReports = resolve(tmpdir(), 'crn-test-reports');
   const localDate = new Date(2026, 8, 20, 18, 36, 59);
   assert.equal(reportDate(localDate.toISOString()), '2026/09/20 18:36');
   const r = review();
   assert.equal(
-    reportDirectory(r, '/profile'),
-    join('/profile', 'Code Review Note', 'PAY-12'),
+    reportDirectory(r, profile),
+    join(profile, 'Code Review Note', 'PAY-12'),
   );
   assert.equal(
-    reportDirectory(r, '/profile', 'reports'),
-    join('/profile', 'reports', 'PAY-12'),
+    reportDirectory(r, profile, 'reports'),
+    join(profile, 'reports', 'PAY-12'),
+  );
+  assert.equal(
+    reportDirectory(r, profile, absoluteReports),
+    join(absoluteReports, 'PAY-12'),
   );
   assert.equal(
     reportBlocks(r).some((b) => b.text === 'Ссылка на задачу:'),
@@ -123,8 +129,8 @@ test('task links are optional and dates and report folders follow user settings'
   r.details.taskNumber = '';
   r.details.taskTitle = 'Без номера';
   assert.equal(
-    reportDirectory(r, '/profile'),
-    join('/profile', 'Code Review Note', 'Без-номера'),
+    reportDirectory(r, profile),
+    join(profile, 'Code Review Note', 'Без-номера'),
   );
   assert.notEqual(
     taskKey(r.details),
@@ -133,8 +139,8 @@ test('task links are optional and dates and report folders follow user settings'
   assert.ok(detailsSchema.safeParse(r.details).success);
   r.details.taskTitle = '../../outside';
   assert.equal(
-    reportDirectory(r, '/profile'),
-    join('/profile', 'Code Review Note', 'outside'),
+    reportDirectory(r, profile),
+    join(profile, 'Code Review Note', 'outside'),
   );
 });
 
