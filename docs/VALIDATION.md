@@ -2,6 +2,12 @@
 
 Current package: **0.1.28** (package ID renamed to `alei1180.vscode-code-review-notebook`; manual data transfer is documented in both READMEs). The results below distinguish local automated checks, visual checks and tests still pending on other platforms.
 
+## CI portability fix — 2026-10-03
+
+Run `37097431074` passed Ubuntu but failed Windows formatting (52 files checked out with CRLF) and macOS integration startup (the VS Code IPC socket exceeded the 103-byte path limit). `.gitattributes` now keeps text files in LF while preserving binary assets. Integration tests use a unique temporary profile, with a short `/tmp` path on macOS, and remove that profile when the run finishes.
+
+Local verification passed: a checkout with `core.autocrlf=true` preserved LF in representative JSON, YAML and TypeScript files and preserved PNG bytes; Prettier passed; the actual macOS development-host integration test passed with the new profile location. A new GitHub Actions matrix run is still required to verify the hosted Windows and macOS runners. Node.js 20 action warnings were separate from both failures and are not changed by this fix.
+
 ## Branding update — 2026-10-03
 
 All 27 Node tests and bundled export, command and report-opening checks passed, as did ESLint. The display name, command categories, panel and form titles, output channel and both READMEs use Code Review Notebook. Repository links point to `alei1180/vscode-code-review-notebook`. The package name, command/settings identifiers and default report folder remain unchanged for compatibility. Demo captions were rebuilt; embedded captures still show the 0.1.26 interface (see DEMO.md).

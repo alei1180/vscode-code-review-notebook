@@ -4,6 +4,7 @@ work/**
 .vscode/**
 .github/**
 .gitignore
+.gitattributes
 .prettier*
 eslint.config.mjs
 tsconfig.json
