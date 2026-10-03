@@ -2,7 +2,7 @@
 
 Manual code reviews in VS Code. Collect notes beside your code and export a local Markdown or PDF report.
 
-[Русская версия](README.ru.md)
+[Install from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=alei1180.vscode-code-review-notebook) · [Русская версия](README.ru.md)
 
 ## See it in action
 
@@ -108,11 +108,19 @@ Files must be saved and have no unsaved changes when adding a note. Content and 
 
 An interrupted export retains its number and temporarily prevents editing; retry completion to finish. A crashed storage writer's lock expires after about 30 seconds. Keep review and report sizes reasonable; PDF generation is in memory.
 
-## Install from VSIX
+## Installation
+
+Install [Code Review Notebook from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=alei1180.vscode-code-review-notebook), or use the VS Code command line:
+
+```sh
+code --install-extension alei1180.vscode-code-review-notebook
+```
+
+### Install from VSIX
 
 Use **Extensions → … → Install from VSIX…** and select the release package. Alternatively: `code --install-extension vscode-code-review-notebook-0.1.28.vsix`.
 
-Marketplace publication is planned. The repository does not publish automatically.
+Updates are published to Marketplace manually; the repository does not publish automatically.
 
 ## Development
 

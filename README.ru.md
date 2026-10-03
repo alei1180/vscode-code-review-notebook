@@ -2,7 +2,7 @@
 
 Ручное код-ревью в VS Code: замечания к строкам кода и локальные отчёты в Markdown и PDF.
 
-[English](README.md)
+[Установить из Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=alei1180.vscode-code-review-notebook) · [English](README.md)
 
 ## Пример использования
 
@@ -104,7 +104,15 @@ PDF оформлен в стиле SQM lecture-notes, адаптированно
 
 ## Установка
 
-В панели расширений выберите **… → Установить из VSIX…** и укажите `vscode-code-review-notebook-0.1.28.vsix`. Публикация в Marketplace запланирована; автоматической публикации нет.
+Расширение доступно в [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=alei1180.vscode-code-review-notebook). Для установки через командную строку VS Code:
+
+```sh
+code --install-extension alei1180.vscode-code-review-notebook
+```
+
+### Установка из VSIX
+
+В панели расширений выберите **… → Установить из VSIX…** и укажите `vscode-code-review-notebook-0.1.28.vsix`. Обновления в Marketplace публикуются вручную; автоматической публикации из репозитория нет.
 
 ## Разработка
 
